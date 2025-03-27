@@ -105,13 +105,6 @@ function generateEmojiGrid(category) {
     // Get emojis for the selected category
     const emojis = emojiList[category];
     
-    // Calculate how many rows we need for this category
-    const itemsPerRow = 6;
-    const rows = Math.ceil(emojis.length / itemsPerRow);
-    
-    // Set grid template rows
-    emojiGridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-    
     // Create emoji elements
     emojis.forEach(emoji => {
         const emojiElement = document.createElement('div');
