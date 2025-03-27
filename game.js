@@ -248,13 +248,46 @@ function formatCategoryName(category) {
 // Update active category tab
 function updateCategoryTabs() {
     const tabs = document.querySelectorAll('.category-tab');
+    let activeTab = null;
+    
     tabs.forEach(tab => {
         if (tab.dataset.category === selectedCategory) {
             tab.classList.add('active');
+            activeTab = tab;
         } else {
             tab.classList.remove('active');
         }
     });
+    
+    // Scroll the selected tab into view
+    if (activeTab && categoryTabsElement) {
+        // Calculate if tab is out of view
+        const tabRect = activeTab.getBoundingClientRect();
+        const containerRect = categoryTabsElement.getBoundingClientRect();
+        
+        const isTabLeftOfView = tabRect.left < containerRect.left;
+        const isTabRightOfView = tabRect.right > containerRect.right;
+        
+        if (isTabLeftOfView || isTabRightOfView) {
+            // Smooth scroll to bring it into view
+            const scrollOptions = { 
+                behavior: 'smooth',
+                inline: 'center' // Center the tab in the visible area
+            };
+            
+            try {
+                // Use scrollIntoView with options if supported
+                activeTab.scrollIntoView(scrollOptions);
+            } catch (error) {
+                // Fallback for older browsers
+                const scrollLeft = activeTab.offsetLeft - (categoryTabsElement.offsetWidth / 2) + (activeTab.offsetWidth / 2);
+                categoryTabsElement.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }
 }
 
 // Generate emoji grid with all emojis in a continuous scrollable list
