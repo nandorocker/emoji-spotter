@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Spotter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Emoji Spotter</h1>
+        
+        <div class="game-info">
+            <div class="score-container">
+                <p>Score: <span id="score">0</span></p>
+                <p>Level: <span id="level">1</span></p>
+                <p>Combo: <span id="combo">0</span></p>
+            </div>
+            <div class="timer-container">
+                <div id="timer-bar">
+                    <div id="timer-fill"></div>
+                </div>
+                <p id="timer-text">30</p>
+            </div>
+        </div>
+
+        <div class="target-container">
+            <h2>Find this emoji:</h2>
+            <div id="target-emoji"></div>
+        </div>
+
+        <div class="emoji-selector-container">
+            <div class="category-tabs">
+                <!-- Tabs will be dynamically added here -->
+            </div>
+            <div class="emoji-grid" id="emoji-grid">
+                <!-- Emojis will be dynamically added here -->
+            </div>
+        </div>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title">Game Over!</h2>
+                <p id="modal-message">Your final score: 0</p>
+                <button id="restart-button">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="appleEmojis.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
