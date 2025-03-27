@@ -225,7 +225,12 @@ function createCategoryTabs() {
         tab.addEventListener('click', () => {
             selectedCategory = category;
             updateCategoryTabs();
-            generateEmojiGrid(category);
+            
+            // Instead of regenerating the grid, just scroll to the selected category
+            const categoryElement = document.getElementById(`category-${category}`);
+            if (categoryElement) {
+                categoryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
         
         categoryTabsElement.appendChild(tab);
@@ -252,26 +257,58 @@ function updateCategoryTabs() {
     });
 }
 
-// Generate emoji grid for the selected category
-function generateEmojiGrid(category) {
+// Generate emoji grid with all emojis in a continuous scrollable list
+function generateEmojiGrid(activeCategory = null) {
     if (!emojiGridElement) return;
     emojiGridElement.innerHTML = '';
     
-    // Get emojis for the selected category
-    const emojis = emojiList[category];
+    // If activeCategory is null, show all categories
+    // Otherwise, show all categories but scroll to the active one
+    const allCategories = Object.keys(emojiList);
     
-    // Create emoji elements
-    emojis.forEach(emoji => {
-        const emojiElement = document.createElement('div');
-        emojiElement.className = 'emoji';
-        emojiElement.textContent = emoji;
+    // Generate all emojis in one continuous list
+    allCategories.forEach((category, index) => {
+        // Create an invisible marker for scroll detection (used for category tab selection)
+        const categoryMarker = document.createElement('div');
+        categoryMarker.id = `category-${category}`;
+        categoryMarker.className = 'emoji-category-marker';
+        emojiGridElement.appendChild(categoryMarker);
         
-        emojiElement.addEventListener('click', () => {
-            handleEmojiClick(emoji, emojiElement);
+        // Create emojis for this category
+        const emojis = emojiList[category];
+        const emojiContainer = document.createElement('div');
+        emojiContainer.className = 'emoji-category-container';
+        emojiContainer.dataset.category = category;
+        
+        emojis.forEach(emoji => {
+            const emojiElement = document.createElement('div');
+            emojiElement.className = 'emoji';
+            emojiElement.textContent = emoji;
+            emojiElement.dataset.category = category;
+            
+            emojiElement.addEventListener('click', () => {
+                handleEmojiClick(emoji, emojiElement);
+            });
+            
+            emojiContainer.appendChild(emojiElement);
         });
         
-        emojiGridElement.appendChild(emojiElement);
+        emojiGridElement.appendChild(emojiContainer);
     });
+    
+    // If an active category is specified, scroll to it
+    if (activeCategory) {
+        const categoryElement = document.getElementById(`category-${activeCategory}`);
+        if (categoryElement) {
+            // Scroll the emoji grid to the selected category with smooth animation
+            setTimeout(() => {
+                categoryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    }
+    
+    // Update which category is visible in the viewport
+    setupScrollListener();
 }
 
 // Handle emoji click
@@ -780,3 +817,54 @@ window.addEventListener('load', () => {
         initGame();
     }
 });
+
+// Setup scroll listener to update active category tab based on scroll position
+function setupScrollListener() {
+    if (!emojiGridElement) return;
+    
+    // Remove any existing scroll listeners
+    emojiGridElement.removeEventListener('scroll', handleEmojiGridScroll);
+    
+    // Add scroll listener
+    emojiGridElement.addEventListener('scroll', handleEmojiGridScroll);
+    
+    // Initial check of which category is visible
+    handleEmojiGridScroll();
+}
+
+// Handle emoji grid scroll to update the active category tab
+function handleEmojiGridScroll() {
+    if (!emojiGridElement) return;
+    
+    // Get all category markers
+    const categoryMarkers = document.querySelectorAll('.emoji-category-marker');
+    if (!categoryMarkers.length) return;
+    
+    // Get the visible area of the emoji grid
+    const gridRect = emojiGridElement.getBoundingClientRect();
+    const gridTop = gridRect.top;
+    const gridCenter = gridTop + (gridRect.height / 3); // Use upper third as detection point
+    
+    // Find which category marker is closest to the top of the visible area
+    let closestMarker = null;
+    let closestDistance = Infinity;
+    
+    categoryMarkers.forEach(marker => {
+        const markerRect = marker.getBoundingClientRect();
+        const distance = Math.abs(markerRect.top - gridCenter);
+        
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestMarker = marker;
+        }
+    });
+    
+    // Update the selected category
+    if (closestMarker) {
+        const categoryId = closestMarker.id.replace('category-', '');
+        if (categoryId !== selectedCategory) {
+            selectedCategory = categoryId;
+            updateCategoryTabs();
+        }
+    }
+}
