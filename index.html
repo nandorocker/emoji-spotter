@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emoji Spotter</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
+    <div class="particles-container" id="particles-js"></div>
+    
     <div class="game-container">
         <h1>Emoji Spotter</h1>
         
@@ -27,6 +30,7 @@
         <div class="target-container">
             <h2>Find this emoji:</h2>
             <div id="target-emoji"></div>
+            <div id="target-pulse"></div>
         </div>
 
         <div class="emoji-selector-container">
@@ -41,12 +45,53 @@
         <div id="modal" class="modal">
             <div class="modal-content">
                 <h2 id="modal-title">Game Over!</h2>
+                <div id="final-score-display">0</div>
                 <p id="modal-message">Your final score: 0</p>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="emojis-found">0</span>
+                        <span class="stat-label">Emojis Found</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="max-combo">0</span>
+                        <span class="stat-label">Max Combo</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="max-level">0</span>
+                        <span class="stat-label">Highest Level</span>
+                    </div>
+                </div>
                 <button id="restart-button">Play Again</button>
+                <button id="share-button">Share Score</button>
+            </div>
+        </div>
+        
+        <div id="countdown-overlay" class="countdown-overlay">
+            <div id="countdown" class="countdown">3</div>
+        </div>
+        
+        <div id="tutorial-modal" class="modal">
+            <div class="modal-content tutorial">
+                <h2>How to Play</h2>
+                <div class="tutorial-step">
+                    <div class="tutorial-emoji">👀</div>
+                    <p>Find the target emoji in the grid below</p>
+                </div>
+                <div class="tutorial-step">
+                    <div class="tutorial-emoji">⏱️</div>
+                    <p>Race against the clock to score points</p>
+                </div>
+                <div class="tutorial-step">
+                    <div class="tutorial-emoji">🔥</div>
+                    <p>Build combos for bonus points</p>
+                </div>
+                <button id="start-game-button">Let's Go!</button>
             </div>
         </div>
     </div>
-
+    
+    <!-- Make sure the order of scripts is correct -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="appleEmojis.js"></script>
     <script src="game.js"></script>
 </body>
