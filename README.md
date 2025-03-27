@@ -75,6 +75,12 @@ A fun web game that tests your ability to quickly find specific emojis. Challeng
 - **Time Penalties**: -2 seconds for wrong selections
 - **Time Bonuses**: +5 seconds when leveling up, +1 second for combos over 3
 
+## 🐞 Debug Mode
+
+- Press `d` to toggle debug on/off
+- Press `t` to toggle stop timer
+- Press `r` to reset the game
+
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/emoji-spotter/issues).

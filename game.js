@@ -13,6 +13,7 @@ let emojisFound = 0;
 let maxCombo = 0;
 let isFirstGame = true;
 let particles = null;
+let debugMode = false; // Add debug mode flag
 
 // DOM elements - with error handling
 const scoreElement = document.getElementById('score');
@@ -779,6 +780,63 @@ function endGame() {
     isFirstGame = false;
 }
 
+// Reset the game (for debug mode)
+function resetGame() {
+    if (modal) modal.style.display = 'none';
+    startCountdown();
+}
+
+// Toggle debug mode
+function toggleDebugMode() {
+    debugMode = !debugMode;
+    showMessage(`Debug Mode: ${debugMode ? 'ON' : 'OFF'}`, debugMode ? '#4CAF50' : '#ff3b30');
+    
+    // Create or update debug indicator
+    let debugIndicator = document.getElementById('debug-indicator');
+    
+    if (debugMode) {
+        if (!debugIndicator) {
+            debugIndicator = document.createElement('div');
+            debugIndicator.id = 'debug-indicator';
+            debugIndicator.style.position = 'fixed';
+            debugIndicator.style.top = '10px';
+            debugIndicator.style.right = '10px';
+            debugIndicator.style.background = 'rgba(0, 0, 0, 0.7)';
+            debugIndicator.style.color = '#4CAF50';
+            debugIndicator.style.padding = '5px 10px';
+            debugIndicator.style.borderRadius = '4px';
+            debugIndicator.style.fontSize = '12px';
+            debugIndicator.style.fontWeight = 'bold';
+            debugIndicator.style.zIndex = '1000';
+            document.body.appendChild(debugIndicator);
+        }
+        debugIndicator.textContent = '🐛 DEBUG ON';
+        debugIndicator.style.display = 'block';
+    } else if (debugIndicator) {
+        debugIndicator.style.display = 'none';
+        
+        // If debug mode is being turned off, ensure the timer is running if game is not over
+        if (!isGameOver && !gameTimer) {
+            startTimer();
+            showMessage('Timer resumed', '#4CAF50');
+        }
+    }
+}
+
+// Stop timer (for debug mode)
+function stopTimer() {
+    if (!debugMode) return;
+    
+    if (gameTimer) {
+        clearInterval(gameTimer);
+        gameTimer = null;
+        showMessage('Timer stopped', '#ff9500');
+    } else {
+        startTimer();
+        showMessage('Timer resumed', '#4CAF50');
+    }
+}
+
 // Share score on social media
 if (shareButton) {
     shareButton.addEventListener('click', () => {
@@ -844,12 +902,39 @@ window.addEventListener('load', () => {
         
         // Show tutorial or start game
         showTutorial();
+
+        // Add keyboard event listeners for debug mode
+        document.addEventListener('keydown', handleKeyPress);
     } catch (error) {
         console.error("Error initializing game:", error);
         // Fallback to direct game start if there's an error
         initGame();
     }
 });
+
+// Handle keyboard shortcuts for debug mode
+function handleKeyPress(event) {
+    // Toggle debug mode with 'd' key
+    if (event.key === 'd') {
+        toggleDebugMode();
+    }
+    
+    // Only process other debug shortcuts if debug mode is on
+    if (debugMode) {
+        // Stop/resume timer with 't' key
+        if (event.key === 't') {
+            stopTimer();
+        }
+        
+        // Reset game with 'r' key
+        if (event.key === 'r') {
+            if (!isGameOver) {
+                showMessage('Game reset', '#ff9500');
+            }
+            resetGame();
+        }
+    }
+}
 
 // Setup scroll listener to update active category tab based on scroll position
 function setupScrollListener() {

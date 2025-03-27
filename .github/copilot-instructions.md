@@ -1,1 +1,2 @@
 - always use pnpm instead of npm
+- don't start the server after every iteration; assume it's already running
