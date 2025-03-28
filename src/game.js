@@ -4,16 +4,13 @@ import emojiList from './appleEmojis.js';
 // Game variables
 let score = 0;
 let level = 1;
-let combo = 0;
 let gameTimer = null;
 let timeLeft = 30;
 let targetEmoji = null;
 let selectedCategory = 'smileys';
 let isGameOver = false;
-let comboTimeoutId = null;
 let lastFoundTime = 0;
 let emojisFound = 0;
-let maxCombo = 0;
 let isFirstGame = true;
 let particles = null;
 let debugMode = false; // Add debug mode flag
@@ -21,7 +18,6 @@ let debugMode = false; // Add debug mode flag
 // DOM elements - with error handling
 const scoreElement = document.getElementById('score');
 const levelElement = document.getElementById('level');
-const comboElement = document.getElementById('combo');
 const timerFillElement = document.getElementById('timer-fill');
 const timerTextElement = document.getElementById('timer-text');
 const targetEmojiElement = document.getElementById('target-emoji');
@@ -183,17 +179,14 @@ function initGame() {
     // Reset game variables
     score = 0;
     level = 1;
-    combo = 0;
     timeLeft = 30;
     isGameOver = false;
     emojisFound = 0;
-    maxCombo = 0;
     lastFoundTime = 0;
     
     // Reset UI with error handling
     if (scoreElement) scoreElement.textContent = score;
     if (levelElement) levelElement.textContent = level;
-    if (comboElement) comboElement.textContent = combo;
     if (timerFillElement) timerFillElement.style.width = '100%';
     if (timerTextElement) timerTextElement.textContent = timeLeft;
     
@@ -355,38 +348,13 @@ function handleEmojiClick(emoji, emojiElement) {
     if (emoji === targetEmoji) {
         // Found the correct emoji!
         const now = Date.now();
-        const foundQuickly = lastFoundTime > 0 && (now - lastFoundTime) < 10000; // Within 10 seconds
         lastFoundTime = now;
         
         // Update score based on level
-        const basePoints = 10 * level;
-        let pointsEarned = basePoints;
-        
-        // Update combo
-        combo++;
-        if (combo > maxCombo) maxCombo = combo;
-        if (comboElement) {
-            comboElement.textContent = combo;
-            comboElement.classList.add('pulse');
-            setTimeout(() => comboElement.classList.remove('pulse'), 500);
-        }
+        const pointsEarned = 10 * level;
         
         // Update emojis found
         emojisFound++;
-        
-        // Apply combo bonuses
-        if (combo >= 3) {
-            if (foundQuickly) {
-                // Additional bonus for quick successive finds
-                pointsEarned *= 2;
-                showMessage(`Quick combo! +${pointsEarned} pts!`, '#ff9500');
-                playComboAnimation(emoji, emojiElement);
-            } else {
-                // Regular combo bonus
-                pointsEarned = Math.floor(pointsEarned * 1.5);
-                showMessage(`Combo x${combo}! +${pointsEarned} pts!`, '#4CAF50');
-            }
-        }
         
         // Update score
         score += pointsEarned;
@@ -395,6 +363,9 @@ function handleEmojiClick(emoji, emojiElement) {
             scoreElement.classList.add('pulse');
             setTimeout(() => scoreElement.classList.remove('pulse'), 500);
         }
+        
+        // Show message
+        showMessage(`+${pointsEarned} pts!`, '#4CAF50');
         
         // Show the emoji with a "correct" animation
         highlightEmoji(emoji, emojiElement);
@@ -405,25 +376,8 @@ function handleEmojiClick(emoji, emojiElement) {
         // Set new target emoji
         setNewTargetEmoji();
         
-        // Add time bonus for successful find
-        if (combo > 3) {
-            timeLeft = Math.min(60, timeLeft + 1);
-            updateTimer();
-        }
-        
-        // Reset combo timeout
-        if (comboTimeoutId) clearTimeout(comboTimeoutId);
-        comboTimeoutId = setTimeout(() => {
-            combo = 0;
-            if (comboElement) comboElement.textContent = combo;
-        }, 10000); // Reset combo after 10 seconds of inactivity
-        
     } else {
         // Wrong emoji, penalize
-        combo = 0;
-        if (comboElement) comboElement.textContent = combo;
-        if (comboTimeoutId) clearTimeout(comboTimeoutId);
-        
         // Small time penalty (2 seconds)
         timeLeft = Math.max(1, timeLeft - 2);
         updateTimer();
@@ -461,49 +415,6 @@ document.head.insertAdjacentHTML('beforeend', `
         }
     </style>
 `);
-
-// Play combo animation
-function playComboAnimation(emoji, emojiElement) {
-    if (!emojiElement) return;
-    
-    try {
-        // Create floating text animation
-        const floatingText = document.createElement('div');
-        floatingText.textContent = `+${combo}x COMBO!`;
-        floatingText.style.position = 'fixed';
-        floatingText.style.fontSize = '24px';
-        floatingText.style.fontWeight = 'bold';
-        floatingText.style.color = '#ffbd59';
-        floatingText.style.textShadow = '0 0 5px rgba(0, 0, 0, 0.5)';
-        floatingText.style.pointerEvents = 'none';
-        floatingText.style.zIndex = '1000';
-        
-        // Position the text near the clicked emoji
-        const rect = emojiElement.getBoundingClientRect();
-        floatingText.style.left = `${rect.left + rect.width/2}px`;
-        floatingText.style.top = `${rect.top}px`;
-        floatingText.style.transform = 'translate(-50%, -100%)';
-        
-        // Add animation
-        floatingText.style.transition = 'all 1s ease-out';
-        document.body.appendChild(floatingText);
-        
-        // Trigger animation
-        setTimeout(() => {
-            floatingText.style.transform = 'translate(-50%, -200%)';
-            floatingText.style.opacity = '0';
-        }, 10);
-        
-        // Remove element after animation
-        setTimeout(() => {
-            if (document.body.contains(floatingText)) {
-                document.body.removeChild(floatingText);
-            }
-        }, 1000);
-    } catch (error) {
-        console.error("Error in combo animation:", error);
-    }
-}
 
 // Highlight the found emoji with animation
 function highlightEmoji(emoji, emojiElement) {
@@ -771,7 +682,6 @@ function endGame() {
     // Update game stats
     if (finalScoreDisplay) finalScoreDisplay.textContent = score;
     if (emojisFoundElement) emojisFoundElement.textContent = emojisFound;
-    if (maxComboElement) maxComboElement.textContent = maxCombo;
     if (maxLevelElement) maxLevelElement.textContent = level;
     
     // Show game over modal
@@ -843,7 +753,7 @@ function stopTimer() {
 // Share score on social media
 if (shareButton) {
     shareButton.addEventListener('click', () => {
-        const text = `I scored ${score} points in Emoji Spotter! Can you beat my score? I found ${emojisFound} emojis with a max combo of ${maxCombo}! 🎮`;
+        const text = `I scored ${score} points in Emoji Spotter! Can you beat my score? I found ${emojisFound} emojis! 🎮`;
         
         if (navigator.share) {
             navigator.share({
