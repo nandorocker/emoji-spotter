@@ -1,3 +1,6 @@
+// Import the emoji list from the module
+import emojiList from './appleEmojis.js';
+
 // Game variables
 let score = 0;
 let level = 1;
