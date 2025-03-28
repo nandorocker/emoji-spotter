@@ -35,54 +35,129 @@ body {
     z-index: -1;
 }
 
-.game-container {
-    background-color: var(--card-bg);
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 600px;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    position: relative;
-    backdrop-filter: blur(10px);
-    z-index: 10;
-}
-
+/* Game title outside of the box */
 h1 {
     text-align: center;
-    color: var(--primary-color);
+    color: white;
     margin-bottom: 10px;
     font-size: 36px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.game-info {
+/* Find this emoji text - now inside the box */
+.find-emoji-title-inside {
+    text-align: center;
+    color: var(--text-color);
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    z-index: 10;
+}
+
+.game-card {
+    background-color: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    min-width: 450px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    backdrop-filter: blur(10px);
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Three boxes layout for score, emoji, and level */
+.info-boxes-container {
     display: flex;
     justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 10px;
-    background: rgba(255, 255, 255, 0.8);
+    justify-content: center;
+    padding: 15px;
     border-radius: 16px;
-    padding: 12px;
+}
+
+/* Keep the emoji box white with shadow, but remove for score/level */
+.emoji-box {
+    aspect-ratio: 1/1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.score-container {
-    display: flex;
-    gap: 15px;
+.score-level-box {
+    text-align: center;
+    background: transparent;
+    box-shadow: none;
+    position: relative;
 }
 
-.score-container p {
+.score-level-label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #4a4a68;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.score-level-value {
+    font-size: 32px;
     font-weight: bold;
-    color: var(--text-color);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    display: inline-block;
+    transition: all 0.3s ease;
 }
 
-#score, #level, #combo {
+.score-level-value:after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    opacity: 0.6;
+    border-radius: 4px;
+}
+
+#score, #level {
     position: relative;
     display: inline-block;
     transition: transform 0.3s, color 0.3s;
@@ -98,15 +173,8 @@ h1 {
     100% { transform: scale(1); }
 }
 
-.timer-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
 #timer-bar {
-    width: 150px;
+    width: 100%;
     height: 12px;
     background-color: #e0e0e0;
     border-radius: 6px;
@@ -153,10 +221,10 @@ h1 {
 }
 
 #target-emoji {
-    font-size: 80px;
+    font-size: 60px;
     line-height: 1;
     text-align: center;
-    min-height: 90px;
+    min-height: 60px;
     z-index: 2;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
     transition: transform 0.3s ease;
@@ -164,8 +232,8 @@ h1 {
 
 #target-pulse {
     position: absolute;
-    width: 150px;
-    height: 150px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 189, 89, 0.4) 0%, rgba(255, 189, 89, 0) 70%);
     z-index: 1;
