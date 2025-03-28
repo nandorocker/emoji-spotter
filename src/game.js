@@ -963,29 +963,43 @@ function handleEmojiGridScroll() {
     
     // Get the visible area of the emoji grid
     const gridRect = emojiGridElement.getBoundingClientRect();
-    const gridTop = gridRect.top;
-    const gridCenter = gridTop + (gridRect.height / 3); // Use upper third as detection point
+    // Use the middle of the viewport as the detection point
+    const gridMiddle = gridRect.top + (gridRect.height / 2);
     
-    // Find which category marker is closest to the top of the visible area
-    let closestMarker = null;
-    let closestDistance = Infinity;
+    // Find which category marker is closest to or just passed the middle
+    let visibleCategory = null;
     
-    categoryMarkers.forEach(marker => {
-        const markerRect = marker.getBoundingClientRect();
-        const distance = Math.abs(markerRect.top - gridCenter);
-        
-        if (distance < closestDistance) {
-            closestDistance = distance;
-            closestMarker = marker;
-        }
+    // Sort markers by their position (top to bottom)
+    const sortedMarkers = Array.from(categoryMarkers).sort((a, b) => {
+        return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
     });
     
-    // Update the selected category
-    if (closestMarker) {
-        const categoryId = closestMarker.id.replace('category-', '');
-        if (categoryId !== selectedCategory) {
-            selectedCategory = categoryId;
-            updateCategoryTabs();
+    // Find the last marker that's above or at the middle point
+    for (let i = 0; i < sortedMarkers.length; i++) {
+        const marker = sortedMarkers[i];
+        const markerRect = marker.getBoundingClientRect();
+        
+        if (markerRect.top <= gridMiddle) {
+            visibleCategory = marker.id.replace('category-', '');
+            
+            // If we're at the last marker or the next marker is below the middle,
+            // this is our category
+            if (i === sortedMarkers.length - 1 || 
+                sortedMarkers[i+1].getBoundingClientRect().top > gridMiddle) {
+                break;
+            }
+        } else {
+            // If the first marker is already below the middle, use the first category
+            if (i === 0 && visibleCategory === null) {
+                visibleCategory = sortedMarkers[0].id.replace('category-', '');
+            }
+            break;
         }
+    }
+    
+    // Update the selected category
+    if (visibleCategory && visibleCategory !== selectedCategory) {
+        selectedCategory = visibleCategory;
+        updateCategoryTabs();
     }
 }
