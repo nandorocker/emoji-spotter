@@ -1,5 +1,6 @@
 // Import the emoji list from the module
 import emojiList from './appleEmojis.js';
+import { levelConfig } from './config/levelConfig.js';
 
 // Game variables
 let score = 0;
@@ -14,6 +15,10 @@ let emojisFound = 0;
 let isFirstGame = true;
 let particles = null;
 let debugMode = false; // Add debug mode flag
+let currentLevelConfig = null;
+let matchesRequired = 0;
+let matchesCompleted = 0;
+let availableCategories = [];
 
 // Initialize drag scrolling variables
 let isDragging = false;
@@ -189,17 +194,19 @@ function initGame() {
     // Reset game variables
     score = 0;
     level = 1;
-    timeLeft = 30;
     isGameOver = false;
     emojisFound = 0;
     lastFoundTime = 0;
+    matchesCompleted = 0;
+    
+    // Initialize level configuration
+    loadLevelConfig(level);
     
     // Reset UI with error handling
     if (scoreElement) scoreElement.textContent = score;
     if (levelElement) levelElement.textContent = level;
     if (timerFillElement) {
         timerFillElement.style.width = '100%';
-        // Explicitly set the initial timer color to green
         timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
         timerFillElement.style.animation = 'none';
     }
@@ -391,14 +398,13 @@ function handleEmojiClick(emoji, emojiElement) {
         const now = Date.now();
         lastFoundTime = now;
         
-        // Update score based on level
+        // Update score and level progress counters
         const pointsEarned = 10 * level;
-        
-        // Update emojis found
-        emojisFound++;
-        
-        // Update score
         score += pointsEarned;
+        emojisFound++;
+        matchesCompleted++;
+        
+        // Update UI
         if (scoreElement) {
             scoreElement.textContent = score;
             scoreElement.classList.add('pulse');
@@ -411,12 +417,13 @@ function handleEmojiClick(emoji, emojiElement) {
         // Show the emoji with a "correct" animation
         highlightEmoji(emoji, emojiElement);
         
-        // Progress level if enough points
-        checkLevelProgress();
-        
-        // Set new target emoji
-        setNewTargetEmoji();
-        
+        // Check if level is complete
+        if (matchesCompleted >= matchesRequired) {
+            advanceToNextLevel();
+        } else {
+            // Set new target emoji if level not complete
+            setNewTargetEmoji();
+        }
     } else {
         // Wrong emoji, penalize
         // Small time penalty (2 seconds)
@@ -586,13 +593,104 @@ function checkLevelProgress() {
     }
 }
 
+// Advance to the next level
+function advanceToNextLevel() {
+    // Stop the current timer
+    if (gameTimer) clearInterval(gameTimer);
+    
+    // Increment level
+    level++;
+    
+    // Load new level configuration
+    loadLevelConfig(level);
+    
+    // Update level display
+    if (levelElement) {
+        levelElement.textContent = level;
+        levelElement.classList.add('level-up');
+        setTimeout(() => levelElement.classList.remove('level-up'), 1000);
+    }
+    
+    // Show level transition with countdown
+    if (countdownOverlay && countdownElement) {
+        // Create level info for the countdown overlay
+        const levelInfo = document.createElement('div');
+        levelInfo.style.fontSize = '24px';
+        levelInfo.style.marginTop = '20px';
+        levelInfo.style.fontWeight = 'normal';
+        levelInfo.style.textAlign = 'center';
+        
+        // Add required matches info
+        levelInfo.innerHTML = `Level ${level}<br>Find ${matchesRequired} emojis in ${timeLeft} seconds`;
+        
+        // Add new category info if there is one
+        if (currentLevelConfig.newCategory) {
+            const formattedCategory = formatCategoryName(currentLevelConfig.newCategory);
+            levelInfo.innerHTML += `<br><br>New category: ${formattedCategory}`;
+        }
+        
+        // Add info to countdown overlay
+        countdownOverlay.appendChild(levelInfo);
+        
+        // Show overlay with countdown
+        countdownOverlay.style.display = 'flex';
+        countdownElement.textContent = 3;
+        
+        let count = 3;
+        const countInterval = setInterval(() => {
+            count--;
+            if (count <= 0) {
+                clearInterval(countInterval);
+                countdownOverlay.style.display = 'none';
+                
+                // Remove level info element after transition
+                if (countdownOverlay.contains(levelInfo)) {
+                    countdownOverlay.removeChild(levelInfo);
+                }
+                
+                // Continue game
+                startNextLevel();
+            } else {
+                countdownElement.textContent = count;
+            }
+        }, 1000);
+    } else {
+        // If overlay not available, start next level directly
+        startNextLevel();
+    }
+}
+
+// Start the next level after transition
+function startNextLevel() {
+    // Reset match counter
+    matchesCompleted = 0;
+    
+    // Update UI
+    if (timerFillElement) {
+        timerFillElement.style.width = '100%';
+        timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+        timerFillElement.style.animation = 'none';
+    }
+    
+    // Regenerate emoji grid with new available categories
+    generateEmojiGrid(selectedCategory);
+    
+    // Set new target emoji
+    setNewTargetEmoji();
+    
+    // Start the timer
+    startTimer();
+}
+
 // Select a new random target emoji from all categories
 function setNewTargetEmoji() {
     if (!targetEmojiElement) return;
     
-    // Get a random category
-    const categories = Object.keys(emojiList);
-    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    // Filter to only use available categories for the current level
+    const availableCategoryList = availableCategories || ['smileys'];
+    
+    // Get a random category from available ones
+    const randomCategory = availableCategoryList[Math.floor(Math.random() * availableCategoryList.length)];
     
     // Get a random emoji from that category
     const emojis = emojiList[randomCategory];
@@ -607,7 +705,7 @@ function setNewTargetEmoji() {
         targetEmojiElement.style.transform = 'scale(1)';
     }, 300);
     
-    // Hint the player which category contains the emoji (subtle hint for higher levels)
+    // Hint the player which category contains the emoji (subtle hint for lower levels)
     const targetCategory = document.querySelector(`.category-tab[data-category="${randomCategory}"]`);
     
     // Remove previous hints
@@ -615,7 +713,7 @@ function setNewTargetEmoji() {
         tab.style.border = '2px solid transparent';
     });
     
-    // Add subtle hint
+    // Add subtle hint for early levels
     if (level < 3 && targetCategory) {
         targetCategory.style.border = '2px solid #ff9500';
     }
@@ -639,7 +737,10 @@ function startTimer() {
 function updateTimer() {
     if (!timerFillElement || !timerTextElement) return;
     
-    const percentage = (timeLeft / 30) * 100;
+    // Get max time from current level config
+    const maxTime = currentLevelConfig ? currentLevelConfig.time : 30;
+    const percentage = (timeLeft / maxTime) * 100;
+    
     timerFillElement.style.width = `${percentage}%`;
     timerTextElement.textContent = timeLeft;
     
@@ -853,6 +954,21 @@ if (startGameButton) {
         if (tutorialModal) tutorialModal.style.display = 'none';
         startCountdown();
     });
+}
+
+// Load level configuration
+function loadLevelConfig(currentLevel) {
+    // Get level config or use the last level if beyond config
+    currentLevelConfig = levelConfig.find(config => config.level === currentLevel) || 
+                         levelConfig[levelConfig.length - 1];
+    
+    // Set game parameters from level config
+    matchesRequired = currentLevelConfig.matches;
+    matchesCompleted = 0;
+    timeLeft = currentLevelConfig.time;
+    availableCategories = currentLevelConfig.categories;
+    
+    if (timerTextElement) timerTextElement.textContent = timeLeft;
 }
 
 // Initialize game on load with error handling
