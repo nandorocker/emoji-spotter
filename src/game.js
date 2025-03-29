@@ -660,6 +660,7 @@ function showLevelCompleteMessage() {
         container.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
         container.style.zIndex = '200';
         container.style.backdropFilter = 'blur(5px)';
+        container.style.userSelect = 'none';
         
         // Create level complete text
         const text = document.createElement('div');
@@ -728,7 +729,11 @@ function showLevelTransition() {
     levelInfo.style.borderRadius = '16px';
     levelInfo.style.backdropFilter = 'blur(5px)';
     levelInfo.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-    levelInfo.style.marginBottom = '40px';
+    levelInfo.style.transition = 'transform 0.5s ease';
+    levelInfo.style.userSelect = 'none';
+    levelInfo.style.webkitUserSelect = 'none';
+    levelInfo.style.MozUserSelect = 'none';
+    levelInfo.style.msUserSelect = 'none';
     
     // Create level heading
     const levelTitle = document.createElement('div');
@@ -781,30 +786,53 @@ function showLevelTransition() {
         }
     }
     
-    // Add info box to overlay first
+    // Add info box to overlay first (centered)
+    levelInfo.style.position = 'absolute';
+    levelInfo.style.top = '50%';
+    levelInfo.style.left = '50%';
+    levelInfo.style.transform = 'translate(-50%, -50%)';
     countdownOverlay.appendChild(levelInfo);
     
-    // Create and add countdown element after the info box
+    // Create countdown element - initially hidden
     const countdownWrapper = document.createElement('div');
     countdownWrapper.style.fontSize = '120px';
     countdownWrapper.style.fontWeight = 'bold';
     countdownWrapper.style.color = 'white';
     countdownWrapper.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
+    countdownWrapper.style.opacity = '0';
+    countdownWrapper.style.position = 'absolute';
+    countdownWrapper.style.top = '50%';
+    countdownWrapper.style.left = '50%';
+    countdownWrapper.style.transform = 'translate(-50%, -50%)';
+    countdownWrapper.style.transition = 'opacity 0.5s ease';
+    countdownWrapper.style.userSelect = 'none';
+    countdownWrapper.style.webkitUserSelect = 'none';
+    countdownWrapper.style.MozUserSelect = 'none';
+    countdownWrapper.style.msUserSelect = 'none';
     countdownWrapper.textContent = '3';
     countdownOverlay.appendChild(countdownWrapper);
     
-    // Start countdown
-    let count = 3;
-    const countInterval = setInterval(() => {
-        count--;
-        if (count <= 0) {
-            clearInterval(countInterval);
-            countdownOverlay.style.display = 'none';
-            startNextLevel();
-        } else {
-            countdownWrapper.textContent = count;
-        }
-    }, 1000);
+    // Delay showing countdown number
+    setTimeout(() => {
+        // Move level info up (less distance to prevent overlap)
+        levelInfo.style.transform = 'translate(-50%, -140%)';
+        
+        // Show countdown
+        countdownWrapper.style.opacity = '1';
+        
+        // Start countdown
+        let count = 3;
+        const countInterval = setInterval(() => {
+            count--;
+            if (count <= 0) {
+                clearInterval(countInterval);
+                countdownOverlay.style.display = 'none';
+                startNextLevel();
+            } else {
+                countdownWrapper.textContent = count;
+            }
+        }, 1000);
+    }, 2000);
 }
 
 // Start the next level after transition
