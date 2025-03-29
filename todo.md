@@ -1,92 +1,5 @@
 # To-Do's
 
-## To-Do: Implement Level System
-
-### Phase 1: Core Level Loop
-
-- [x] Create a level config structure with:
-  - required matches
-  - time limit
-  - active categories (count)
-  - new category introduced
-- [x] Set up game loop to:
-  - Load level parameters
-  - Track matches
-  - Advance to next level after success
-  - Trigger game over if time runs out
-- [x] Use default time = 45s unless overridden
-
-### Phase 2: Transitions & Feedback
-
-- [x] Reuse existing countdown animation between levels
-- [x] During countdown, display:
-  - Next level match goal
-  - New category (if any)
-- [x] Hide category info if no new category is being introduced
-
-### Phase 3: Config-Driven Category Management
-
-- [x] Categories should unlock in fixed order:
-  1. Smileys
-  2. People
-  3. Animals & Nature
-  4. Food & Drink
-  5. Activity
-  6. Travel & Places
-  7. Objects
-  8. Symbols
-  9. Flags
-- [x] Logic should pull active category list from config based on level number
-- [ ] Future: allow categories per level to be set manually (for custom levels)
-
-### Phase 4: Polish & Tuning
-
-- [ ] Optional: add preview of new emoji category (icon or name)
-- [ ] Allow tweaks to time/match count via config for tuning
-- [ ] Log or debug current level, active categories, and match stats
-
----
-
-## Score System
-
-### Core Score Logic
-- [ ] Base score: +20 points for each correctly matched emoji.
-
-### Speed Bonus
-- [ ] Track time between prompt shown and correct match.
-- [ ] Apply bonus:
-  - <1s → +10 pts
-  - 1–3s → +5 pts
-  - 3–5s → +2 pts
-  - >5s → no bonus
-
-### Accuracy Bonus
-- [ ] Count number of incorrect taps before match.
-- [ ] If correct match was first tap → +5 bonus.
-
-### Category Bonus
-- [ ] Add per-category bonus values (configurable).
-- [ ] Apply if current target belongs to a bonus-eligible category:
-  - Symbols → +5 pts
-  - Flags → +10 pts
-
-### Confusable Emoji Bonus
-- [ ] Load list of confusable emoji sets (hardcoded or from config).
-- [ ] If matched correctly on first try AND emoji is part of a confusable group → +10 bonus.
-
-### Penalties (Time)
-- [ ] Subtract 5 seconds from remaining time for each incorrect tap.
-
-### Config / Balancing
-- [ ] Make all bonus/penalty values configurable.
-- [ ] Consider making speed bonus thresholds configurable too.
-
-### Optional (Future)
-- [ ] Add debug UI showing breakdown of points earned per emoji.
-- [ ] Add logging or analytics hooks to track how users earn their points.
-
----
-
 ## Debug
 - [x] Press "l" to restart the same level
 - [x] Press "n" to skip to the next level
@@ -103,30 +16,59 @@
 ## Controls
 - [ ] Make it so I can click and drag the emoji list up and down
 
-## Gameplay tweaks
-- [ ] After 3 mistakes, move on to the next emoji
-- [ ] If I get an emoji within 3 seconds, give me a time bonus of +5 seconds
-  - [ ] If I do that 3 times in a row, it's a combo and I get +10 seconds on top
+## Gameplay
+### Level System
 
-## Score
-- set this up better
+## To-Do: Implement Level System
 
-## Hints only after a while
-- [ ] Make the target emoji's tab appear only after a few seconds (2s)
-- [ ] After 5s, make the emoji background pulsate and glow a little and flash VERY mildly
+### Phase 1: Core Logic
+- [ ] Load level config (matches, time, categories).
+- [ ] Start timer and match tracking per level.
+- [ ] On success, trigger next level.
+- [ ] On timeout, trigger Game Over.
 
-## Overlay system
-- [ ] If there's already a message, and another one appears, those are overlapping
-- [ ] Make it so they stack, and the new message "bumps" the previous ones up (so the origin point is always the same)
+### Phase 2: Transition Display
+- [ ] Reuse existing countdown UI between levels.
+- [ ] Add:
+  - Next level match goal
+  - New category (if any)
 
-## Sound Effects
-- [ ] Add SFX and music
+### Phase 3: Category Unlock Logic
+- [ ] Unlock categories per config order (Smileys → Flags).
+- [ ] Pull active categories dynamically from config.
 
-## Reverse Mode
-- [ ] Game describes an emoji (or just uses the name) and you have to find it
+### Phase 4: Config + Debug
+- [ ] Make all level parameters editable via config.
+- [ ] Add basic logging/debug info for current level state.
 
-## Accessibility
-- [ ] Setting: emoji size (small/medium/large)
+### Optional Polish
+- [ ] Show new category icon/name in transition UI.
+- [ ] Add hooks for tuning or analytics later.
+
+---
+
+## To-Do: Implement Scoring System
+
+### Base
+- [ ] +20 points per correct emoji match.
+
+### Bonuses
+- [ ] Speed bonus based on time-to-match.
+- [ ] Accuracy bonus if correct on first tap.
+- [ ] Category bonus (e.g. Flags, Symbols).
+- [ ] Confusable emoji bonus (first-try only).
+
+### Penalties
+- [ ] -5 seconds per incorrect tap.
+
+### Config
+- [ ] All bonus thresholds and values configurable.
+- [ ] Define bonus values per category.
+- [ ] Maintain list of confusable emoji sets.
+
+### Optional
+- [ ] Add score breakdown for debugging or UI display.
+- [ ] Add hooks for analytics/events if needed later.
 
 ## Difficulty
 - [ ] Select difficulty at the beginning
@@ -146,6 +88,26 @@
 
 ---
 
+## UI Improvements
+
+### Hints System
+- [ ] Make the target emoji's tab appear only after a few seconds (2s)
+- [ ] After 5s, make the emoji background pulsate and glow a little and flash VERY mildly
+
+### Overlay system
+- [ ] If there's already a message, and another one appears, those are overlapping
+- [ ] Make it so they stack, and the new message "bumps" the previous ones up (so the origin point is always the same)
+
+### Settings
+- [ ] Accessibility: emoji size (small/medium/large)
+
+---
+
+## Sound Effects
+- [ ] Add SFX and music
+
+---
+
 # Notes
 
 ## Onboarding
@@ -154,4 +116,4 @@
   - Level 3-4: people
   - Level 5-8: smileys + people
   etc.
-- Needs some work to manage cognitive load
+- To avoid confusion, always enable only sequencial ones (1, then 2, then 3, then 1+2+3, etc; never 2+5+8 for example)
