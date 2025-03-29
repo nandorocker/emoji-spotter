@@ -1,103 +1,95 @@
 # To-Do's
 
-## Task: Implement Level-Based Emoji Matching System
+## To-Do: Implement Level System
 
-### Goal
-Introduce a level system where players must spot a set number of emojis under time pressure, with increasing complexity across levels via three variables:
-- Number of emojis to match
-- Time allowed
-- Active emoji categories (gradually revealed)
+### Phase 1: Core Level Loop
 
-Progression should be flexible and driven by a config file (or equivalent structure), not hardcoded logic.
+- [x] Create a level config structure with:
+  - required matches
+  - time limit
+  - active categories (count)
+  - new category introduced
+- [x] Set up game loop to:
+  - Load level parameters
+  - Track matches
+  - Advance to next level after success
+  - Trigger game over if time runs out
+- [x] Use default time = 45s unless overridden
 
----
+### Phase 2: Transitions & Feedback
 
-### Phase 1: Core Level Loop (Basic Functionality)
+- [ ] Reuse existing countdown animation between levels
+- [ ] During countdown, display:
+  - Next level match goal
+  - New category (if any)
+- [ ] Hide category info if no new category is being introduced
 
-**Requirements**
-- Each level has:
-  - A target number of emojis to spot
-  - A timer (default to 45s)
-  - A list of active emoji categories
-- Player must complete the required number of matches within the given time.
-- If time runs out before meeting the goal → Game Over.
-- After completing a level, advance to the next automatically.
+### Phase 3: Config-Driven Category Management
 
-**Implementation Notes**
-- Reuse existing timer and emoji matching logic.
-- Level data should be defined via a config file/structure.
-- No UI polish needed in this phase, just basic level flow.
-- Timer duration and required matches should be read from config.
+- [ ] Categories should unlock in fixed order:
+  1. Smileys
+  2. People
+  3. Animals & Nature
+  4. Food & Drink
+  5. Activity
+  6. Travel & Places
+  7. Objects
+  8. Symbols
+  9. Flags
+- [ ] Logic should pull active category list from config based on level number
+- [ ] Future: allow categories per level to be set manually (for custom levels)
 
----
+### Phase 4: Polish & Tuning
 
-### Phase 2: Transitions + Category Reveal
-
-**Requirements**
-- Between levels, show a transition using the existing countdown animation.
-- During countdown, display:
-  - How many matches are required in the next level
-  - Which new category (if any) is being introduced
-
-**Implementation Notes**
-- Categories are unlocked in this specific order:
-  1. Smileys  
-  2. People  
-  3. Animals & Nature  
-  4. Food & Drink  
-  5. Activity  
-  6. Travel & Places  
-  7. Objects  
-  8. Symbols  
-  9. Flags (last)
-
-- Reuse or minimally extend the existing transition UI.
-- If no new category is being added, skip that line in the UI.
+- [ ] Optional: add preview of new emoji category (icon or name)
+- [ ] Allow tweaks to time/match count via config for tuning
+- [ ] Log or debug current level, active categories, and match stats
 
 ---
 
-### Phase 3: Polish & Tuning (Future Work)
+## Score System
 
-**Scope**
-- Add visual polish to transitions (animations, previews, sound).
-- Tweak match counts and timers based on playtesting feedback.
-- Consider dynamic modifiers later (decoys, special emojis, etc.)
+### Core Score Logic
+- [ ] Base score: +20 points for each correctly matched emoji.
 
----
+### Speed Bonus
+- [ ] Track time between prompt shown and correct match.
+- [ ] Apply bonus:
+  - <1s → +10 pts
+  - 1–3s → +5 pts
+  - 3–5s → +2 pts
+  - >5s → no bonus
 
-### Level Progression (Levels 1–20)
+### Accuracy Bonus
+- [ ] Count number of incorrect taps before match.
+- [ ] If correct match was first tap → +5 bonus.
 
-This table should be implemented as a config file used to drive logic.
+### Category Bonus
+- [ ] Add per-category bonus values (configurable).
+- [ ] Apply if current target belongs to a bonus-eligible category:
+  - Symbols → +5 pts
+  - Flags → +10 pts
 
-| Level | Matches | Time  | Active Categories Count | New Category Introduced | Notes                      |
-|-------|---------|-------|--------------------------|--------------------------|----------------------------|
-| 1     | 3       | 45s   | 1                        | Smileys                 | Intro                      |
-| 2     | 4       | 45s   | 1                        | –                       | Slight bump                |
-| 3     | 5       | 45s   | 1                        | –                       | Base mastery               |
-| 4     | 3       | 40s   | 2                        | People                  | New visual layer           |
-| 5     | 4       | 40s   | 2                        | –                       | Build confidence           |
-| 6     | 5       | 35s   | 2                        | –                       | First tension              |
-| 7     | 5       | 45s   | 3                        | Animals & Nature        | Complexity expands         |
-| 8     | 6       | 45s   | 3                        | –                       |                            |
-| 9     | 5       | 35s   | 3                        | –                       | Fast reaction round        |
-| 10    | 7       | 40s   | 3                        | –                       | First skill gate           |
-| 11    | 4       | 30s   | 4                        | Food & Drink            | Low count, speed challenge |
-| 12    | 6       | 45s   | 4                        | –                       | Recovery level             |
-| 13    | 7       | 35s   | 5                        | Activity                | High load starts           |
-| 14    | 6       | 40s   | 6                        | Travel & Places         | Increasing distractions    |
-| 15    | 8       | 45s   | 7                        | Objects                 | Busy screen                |
-| 16    | 6       | 30s   | 7                        | –                       | Pressure test              |
-| 17    | 9       | 45s   | 7                        | –                       | Mastery checkpoint         |
-| 18    | 7       | 40s   | 8                        | Symbols                 | One before final           |
-| 19    | 10      | 35s   | 8                        | –                       | Final stretch              |
-| 20    | 8       | 45s   | 9                        | Flags                   | Final level, full chaos    |
+### Confusable Emoji Bonus
+- [ ] Load list of confusable emoji sets (hardcoded or from config).
+- [ ] If matched correctly on first try AND emoji is part of a confusable group → +10 bonus.
 
----
+### Penalties (Time)
+- [ ] Subtract 5 seconds from remaining time for each incorrect tap.
 
-Let us know if more levels are needed or if the config system should support procedural generation in future iterations.
+### Config / Balancing
+- [ ] Make all bonus/penalty values configurable.
+- [ ] Consider making speed bonus thresholds configurable too.
 
+### Optional (Future)
+- [ ] Add debug UI showing breakdown of points earned per emoji.
+- [ ] Add logging or analytics hooks to track how users earn their points.
 
 ---
+
+## Debug
+- [ ] Press "l" to restart the same level
+- [ ] Press "n" to skip to the next level
 
 ## Controls
 - [ ] Make it so I can click and drag the emoji list up and down
@@ -107,8 +99,8 @@ Let us know if more levels are needed or if the config system should support pro
 - [ ] If I get an emoji within 3 seconds, give me a time bonus of +5 seconds
   - [ ] If I do that 3 times in a row, it's a combo and I get +10 seconds on top
 
-## Combos
-- [ ] Rethink this feature
+## Score
+- set this up better
 
 ## Hints only after a while
 - [ ] Make the target emoji's tab appear only after a few seconds (2s)
@@ -142,3 +134,15 @@ Let us know if more levels are needed or if the config system should support pro
   - [ ] No tab hints ever
   - [ ] All emojis revealed from the start
   - [ ] Level clocks are shortest
+
+---
+
+# Notes
+
+## Onboarding
+- Level progression: maybe it should be more focused on each category first... then you start adding them up. Example:
+  - Level 1-2: smileys
+  - Level 3-4: people
+  - Level 5-8: smileys + people
+  etc.
+- Needs some work to manage cognitive load

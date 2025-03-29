@@ -241,22 +241,45 @@ function createCategoryTabs() {
     Object.keys(emojiList).forEach(category => {
         const tab = document.createElement('div');
         tab.className = 'category-tab';
-        tab.textContent = formatCategoryName(category);
+        
+        // Check if category is available in current level
+        const isAvailable = availableCategories.includes(category);
+        
+        // Apply locked styling if category is not available yet
+        if (!isAvailable) {
+            tab.classList.add('locked');
+            
+            // Use Lucide icon for locked categories
+            const helpIcon = document.createElement('i');
+            helpIcon.dataset.lucide = 'help-circle';
+            tab.appendChild(helpIcon);
+            
+            tab.title = "Unlock this category by progressing through levels";
+        } else {
+            tab.textContent = formatCategoryName(category);
+        }
+        
         tab.dataset.category = category;
         
-        tab.addEventListener('click', () => {
-            selectedCategory = category;
-            updateCategoryTabs();
-            
-            // Instead of regenerating the grid, just scroll to the selected category
-            const categoryElement = document.getElementById(`category-${category}`);
-            if (categoryElement) {
-                categoryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
+        // Only allow clicking available categories
+        if (isAvailable) {
+            tab.addEventListener('click', () => {
+                selectedCategory = category;
+                updateCategoryTabs();
+                
+                // Scroll to the selected category
+                const categoryElement = document.getElementById(`category-${category}`);
+                if (categoryElement) {
+                    categoryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
         
         categoryTabsElement.appendChild(tab);
     });
+    
+    // Initialize Lucide icons after adding to DOM
+    lucide.createIcons();
 }
 
 // Format category name for display
@@ -317,13 +340,12 @@ function generateEmojiGrid(activeCategory = null) {
     if (!emojiGridElement) return;
     emojiGridElement.innerHTML = '';
     
-    // If activeCategory is null, show all categories
-    // Otherwise, show all categories but scroll to the active one
-    const allCategories = Object.keys(emojiList);
+    // Only show categories available in the current level
+    const categoriesToShow = availableCategories || ['smileys'];
     
-    // Generate all emojis in one continuous list
-    allCategories.forEach((category, index) => {
-        // Create an invisible marker for scroll detection (used for category tab selection)
+    // Generate only the available emoji categories
+    categoriesToShow.forEach((category, index) => {
+        // Create an invisible marker for scroll detection
         const categoryMarker = document.createElement('div');
         categoryMarker.id = `category-${category}`;
         categoryMarker.className = 'emoji-category-marker';
@@ -375,10 +397,10 @@ function generateEmojiGrid(activeCategory = null) {
     });
     
     // If an active category is specified, scroll to it
-    if (activeCategory) {
+    if (activeCategory && categoriesToShow.includes(activeCategory)) {
         const categoryElement = document.getElementById(`category-${activeCategory}`);
         if (categoryElement) {
-            // Scroll the emoji grid to the selected category with smooth animation
+            // Scroll the emoji grid to the selected category
             setTimeout(() => {
                 categoryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
@@ -598,66 +620,198 @@ function advanceToNextLevel() {
     // Stop the current timer
     if (gameTimer) clearInterval(gameTimer);
     
-    // Increment level
-    level++;
+    // Show level complete message
+    showLevelCompleteMessage();
     
-    // Load new level configuration
-    loadLevelConfig(level);
-    
-    // Update level display
-    if (levelElement) {
-        levelElement.textContent = level;
-        levelElement.classList.add('level-up');
-        setTimeout(() => levelElement.classList.remove('level-up'), 1000);
-    }
-    
-    // Show level transition with countdown
-    if (countdownOverlay && countdownElement) {
-        // Create level info for the countdown overlay
-        const levelInfo = document.createElement('div');
-        levelInfo.style.fontSize = '24px';
-        levelInfo.style.marginTop = '20px';
-        levelInfo.style.fontWeight = 'normal';
-        levelInfo.style.textAlign = 'center';
+    // Wait a moment before showing the countdown
+    setTimeout(() => {
+        // Increment level
+        level++;
         
-        // Add required matches info
-        levelInfo.innerHTML = `Level ${level}<br>Find ${matchesRequired} emojis in ${timeLeft} seconds`;
+        // Load new level configuration
+        loadLevelConfig(level);
         
-        // Add new category info if there is one
-        if (currentLevelConfig.newCategory) {
-            const formattedCategory = formatCategoryName(currentLevelConfig.newCategory);
-            levelInfo.innerHTML += `<br><br>New category: ${formattedCategory}`;
+        // Update level display
+        if (levelElement) {
+            levelElement.textContent = level;
+            levelElement.classList.add('level-up');
+            setTimeout(() => levelElement.classList.remove('level-up'), 1000);
         }
         
-        // Add info to countdown overlay
-        countdownOverlay.appendChild(levelInfo);
+        // Show level transition with countdown
+        showLevelTransition();
+    }, 2000); // 2 second delay before showing countdown
+}
+
+// Show a level complete message
+function showLevelCompleteMessage() {
+    try {
+        // Create level complete container
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
+        container.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        container.style.zIndex = '200';
+        container.style.backdropFilter = 'blur(5px)';
         
-        // Show overlay with countdown
-        countdownOverlay.style.display = 'flex';
-        countdownElement.textContent = 3;
+        // Create level complete text
+        const text = document.createElement('div');
+        text.textContent = 'LEVEL COMPLETE!';
+        text.style.color = '#fff';
+        text.style.fontSize = '48px';
+        text.style.fontWeight = 'bold';
+        text.style.marginBottom = '20px';
+        text.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
         
-        let count = 3;
-        const countInterval = setInterval(() => {
-            count--;
-            if (count <= 0) {
-                clearInterval(countInterval);
-                countdownOverlay.style.display = 'none';
-                
-                // Remove level info element after transition
-                if (countdownOverlay.contains(levelInfo)) {
-                    countdownOverlay.removeChild(levelInfo);
-                }
-                
-                // Continue game
-                startNextLevel();
-            } else {
-                countdownElement.textContent = count;
+        // Create stars animation
+        const stars = document.createElement('div');
+        stars.textContent = '⭐⭐⭐';
+        stars.style.fontSize = '64px';
+        stars.style.letterSpacing = '20px';
+        stars.style.animation = 'starPulse 1s infinite alternate';
+        
+        // Add star pulse animation
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes starPulse {
+                0% { transform: scale(0.8); }
+                100% { transform: scale(1.2); }
             }
-        }, 1000);
-    } else {
+        `;
+        document.head.appendChild(styleSheet);
+        
+        // Assemble and display
+        container.appendChild(text);
+        container.appendChild(stars);
+        document.body.appendChild(container);
+        
+        // Remove after delay
+        setTimeout(() => {
+            if (document.body.contains(container)) {
+                document.body.removeChild(container);
+            }
+        }, 2000);
+    } catch (error) {
+        console.error("Error showing level complete message:", error);
+    }
+}
+
+// Show level transition with countdown
+function showLevelTransition() {
+    if (!countdownOverlay || !countdownElement) {
         // If overlay not available, start next level directly
         startNextLevel();
+        return;
     }
+    
+    // Create level info for the countdown overlay
+    const levelInfo = document.createElement('div');
+    levelInfo.className = 'level-transition-info';
+    levelInfo.style.fontSize = '26px';
+    levelInfo.style.marginTop = '30px';
+    levelInfo.style.fontWeight = 'normal';
+    levelInfo.style.textAlign = 'center';
+    levelInfo.style.color = 'white';
+    levelInfo.style.maxWidth = '80%';
+    levelInfo.style.padding = '20px';
+    levelInfo.style.backgroundColor = 'rgba(82, 113, 255, 0.2)';
+    levelInfo.style.borderRadius = '16px';
+    levelInfo.style.backdropFilter = 'blur(5px)';
+    levelInfo.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
+    
+    // Create level heading
+    const levelTitle = document.createElement('div');
+    levelTitle.textContent = `LEVEL ${level}`;
+    levelTitle.style.fontSize = '36px';
+    levelTitle.style.fontWeight = 'bold';
+    levelTitle.style.marginBottom = '15px';
+    levelTitle.style.background = 'linear-gradient(90deg, var(--primary-color), var(--secondary-color))';
+    levelTitle.style.webkitBackgroundClip = 'text';
+    levelTitle.style.webkitTextFillColor = 'transparent';
+    levelTitle.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+    
+    // Add required matches info
+    const objectiveText = document.createElement('div');
+    objectiveText.innerHTML = `Find <b>${matchesRequired}</b> emojis in <b>${timeLeft}</b> seconds`;
+    objectiveText.style.marginBottom = '15px';
+    
+    // Add level info elements
+    levelInfo.appendChild(levelTitle);
+    levelInfo.appendChild(objectiveText);
+    
+    // Add new category info if there is one
+    if (currentLevelConfig.newCategory) {
+        const formattedCategory = formatCategoryName(currentLevelConfig.newCategory);
+        const newCategoryText = document.createElement('div');
+        newCategoryText.innerHTML = `<span style="color:#ffbd59">NEW CATEGORY:</span><br><b>${formattedCategory}</b>`;
+        newCategoryText.style.marginTop = '15px';
+        newCategoryText.style.padding = '10px 15px';
+        newCategoryText.style.backgroundColor = 'rgba(255, 189, 89, 0.2)';
+        newCategoryText.style.borderRadius = '8px';
+        levelInfo.appendChild(newCategoryText);
+        
+        // Add an emoji preview from the new category
+        const categoryEmojis = emojiList[currentLevelConfig.newCategory];
+        if (categoryEmojis && categoryEmojis.length > 0) {
+            const previewContainer = document.createElement('div');
+            previewContainer.style.marginTop = '10px';
+            previewContainer.style.fontSize = '36px';
+            
+            // Display up to 5 random emojis from the category
+            const sampleSize = Math.min(5, categoryEmojis.length);
+            const samples = [];
+            for (let i = 0; i < sampleSize; i++) {
+                const randomIndex = Math.floor(Math.random() * categoryEmojis.length);
+                samples.push(categoryEmojis[randomIndex]);
+            }
+            
+            previewContainer.textContent = samples.join(' ');
+            levelInfo.appendChild(previewContainer);
+        }
+    }
+    
+    // Add info to countdown overlay
+    countdownOverlay.appendChild(levelInfo);
+    
+    // Restructure the countdown overlay for countdown below text
+    countdownOverlay.style.flexDirection = 'column';
+    
+    // Style the countdown number
+    countdownElement.style.fontSize = '120px';
+    countdownElement.style.fontWeight = 'bold';
+    countdownElement.style.color = 'white';
+    countdownElement.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
+    countdownElement.style.marginTop = '60px'; // Add margin between text and countdown
+    
+    // Show overlay with countdown
+    countdownOverlay.style.display = 'flex';
+    countdownElement.textContent = 3;
+    
+    let count = 3;
+    const countInterval = setInterval(() => {
+        count--;
+        if (count <= 0) {
+            clearInterval(countInterval);
+            countdownOverlay.style.display = 'none';
+            
+            // Remove level info element after transition
+            if (countdownOverlay.contains(levelInfo)) {
+                countdownOverlay.removeChild(levelInfo);
+            }
+            
+            // Continue game
+            startNextLevel();
+        } else {
+            countdownElement.textContent = count;
+        }
+    }, 1000);
 }
 
 // Start the next level after transition
@@ -671,6 +825,16 @@ function startNextLevel() {
         timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
         timerFillElement.style.animation = 'none';
     }
+    
+    // Recreate category tabs with updated available categories
+    createCategoryTabs();
+    
+    // If newly unlocked category is available, set it as selected
+    if (currentLevelConfig.newCategory && availableCategories.includes(currentLevelConfig.newCategory)) {
+        selectedCategory = currentLevelConfig.newCategory;
+    }
+    
+    updateCategoryTabs();
     
     // Regenerate emoji grid with new available categories
     generateEmojiGrid(selectedCategory);
@@ -705,7 +869,7 @@ function setNewTargetEmoji() {
         targetEmojiElement.style.transform = 'scale(1)';
     }, 300);
     
-    // Hint the player which category contains the emoji (subtle hint for lower levels)
+    // Hint the player which category contains the emoji
     const targetCategory = document.querySelector(`.category-tab[data-category="${randomCategory}"]`);
     
     // Remove previous hints
@@ -713,8 +877,8 @@ function setNewTargetEmoji() {
         tab.style.border = '2px solid transparent';
     });
     
-    // Add subtle hint for early levels
-    if (level < 3 && targetCategory) {
+    // Add orange border hint to the category
+    if (targetCategory) {
         targetCategory.style.border = '2px solid #ff9500';
     }
 }
@@ -1016,8 +1180,24 @@ function handleKeyPress(event) {
             }
             resetGame();
         }
+        
+        // Restart current level with 'l' key
+        if (event.key === 'l') {
+            if (!isGameOver) {
+                showMessage('Restarting level', '#ff9500');
+                restartCurrentLevel();
+            }
+        }
+        
+        // Skip to next level with 'n' key
+        if (event.key === 'n') {
+            if (!isGameOver) {
+                showMessage('Skipping to next level', '#ff9500');
+                advanceToNextLevel();
+            }
+        }
     }
-}
+} 
 
 // Setup scroll listener to update active category tab based on scroll position
 function setupScrollListener() {

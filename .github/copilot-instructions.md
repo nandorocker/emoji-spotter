@@ -1,3 +1,5 @@
 - always use pnpm instead of npm.
 - explain your decisions as little as possible, describe your steps minimally.
 - don't start the server after every iteration; assume it's already running.
+- use `gamedesign.md` as a reference for requested functionality
+- use `todo.md` as your reference to build requested features
