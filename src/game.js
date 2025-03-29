@@ -980,15 +980,16 @@ function setupDragScrolling() {
     document.removeEventListener('touchmove', drag);
     document.removeEventListener('touchend', stopDrag);
     
-    // Mouse events
-    emojiGridElement.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stopDrag);
+    // Check if using touch device
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
-    // Touch events for mobile
-    emojiGridElement.addEventListener('touchstart', startDrag);
-    document.addEventListener('touchmove', drag, { passive: false });
-    document.addEventListener('touchend', stopDrag);
+    // Only setup drag scrolling for non-touch devices
+    if (!isTouchDevice) {
+        // Mouse events for desktop only
+        emojiGridElement.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDrag);
+    }
     
     // Cancel animation frame if it's running
     if (animationFrameId) {
