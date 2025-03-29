@@ -706,16 +706,19 @@ function showLevelCompleteMessage() {
 // Show level transition with countdown
 function showLevelTransition() {
     if (!countdownOverlay || !countdownElement) {
-        // If overlay not available, start next level directly
         startNextLevel();
         return;
     }
     
+    // Show overlay with countdown
+    countdownOverlay.style.display = 'flex';
+    countdownOverlay.style.flexDirection = 'column';
+    countdownOverlay.innerHTML = '';
+    
     // Create level info for the countdown overlay
     const levelInfo = document.createElement('div');
     levelInfo.className = 'level-transition-info';
-    levelInfo.style.fontSize = '26px';
-    levelInfo.style.marginTop = '30px';
+    levelInfo.style.fontSize = '24px';
     levelInfo.style.fontWeight = 'normal';
     levelInfo.style.textAlign = 'center';
     levelInfo.style.color = 'white';
@@ -725,6 +728,7 @@ function showLevelTransition() {
     levelInfo.style.borderRadius = '16px';
     levelInfo.style.backdropFilter = 'blur(5px)';
     levelInfo.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
+    levelInfo.style.marginBottom = '40px';
     
     // Create level heading
     const levelTitle = document.createElement('div');
@@ -750,22 +754,22 @@ function showLevelTransition() {
     if (currentLevelConfig.newCategory) {
         const formattedCategory = formatCategoryName(currentLevelConfig.newCategory);
         const newCategoryText = document.createElement('div');
-        newCategoryText.innerHTML = `<span style="color:#ffbd59">NEW CATEGORY:</span><br><b>${formattedCategory}</b>`;
+        newCategoryText.innerHTML = `<span style="color:#ffbd59">NEW CATEGORY:</span> <b>${formattedCategory}</b>`;
         newCategoryText.style.marginTop = '15px';
         newCategoryText.style.padding = '10px 15px';
         newCategoryText.style.backgroundColor = 'rgba(255, 189, 89, 0.2)';
         newCategoryText.style.borderRadius = '8px';
         levelInfo.appendChild(newCategoryText);
         
-        // Add an emoji preview from the new category
+        // Add a simpler emoji preview from the new category
         const categoryEmojis = emojiList[currentLevelConfig.newCategory];
         if (categoryEmojis && categoryEmojis.length > 0) {
             const previewContainer = document.createElement('div');
             previewContainer.style.marginTop = '10px';
-            previewContainer.style.fontSize = '36px';
+            previewContainer.style.fontSize = '32px';
             
-            // Display up to 5 random emojis from the category
-            const sampleSize = Math.min(5, categoryEmojis.length);
+            // Display only 3 random emojis from the category
+            const sampleSize = 3;
             const samples = [];
             for (let i = 0; i < sampleSize; i++) {
                 const randomIndex = Math.floor(Math.random() * categoryEmojis.length);
@@ -777,39 +781,28 @@ function showLevelTransition() {
         }
     }
     
-    // Add info to countdown overlay
+    // Add info box to overlay first
     countdownOverlay.appendChild(levelInfo);
     
-    // Restructure the countdown overlay for countdown below text
-    countdownOverlay.style.flexDirection = 'column';
+    // Create and add countdown element after the info box
+    const countdownWrapper = document.createElement('div');
+    countdownWrapper.style.fontSize = '120px';
+    countdownWrapper.style.fontWeight = 'bold';
+    countdownWrapper.style.color = 'white';
+    countdownWrapper.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
+    countdownWrapper.textContent = '3';
+    countdownOverlay.appendChild(countdownWrapper);
     
-    // Style the countdown number
-    countdownElement.style.fontSize = '120px';
-    countdownElement.style.fontWeight = 'bold';
-    countdownElement.style.color = 'white';
-    countdownElement.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
-    countdownElement.style.marginTop = '60px'; // Add margin between text and countdown
-    
-    // Show overlay with countdown
-    countdownOverlay.style.display = 'flex';
-    countdownElement.textContent = 3;
-    
+    // Start countdown
     let count = 3;
     const countInterval = setInterval(() => {
         count--;
         if (count <= 0) {
             clearInterval(countInterval);
             countdownOverlay.style.display = 'none';
-            
-            // Remove level info element after transition
-            if (countdownOverlay.contains(levelInfo)) {
-                countdownOverlay.removeChild(levelInfo);
-            }
-            
-            // Continue game
             startNextLevel();
         } else {
-            countdownElement.textContent = count;
+            countdownWrapper.textContent = count;
         }
     }, 1000);
 }

@@ -18,15 +18,15 @@
 
 ### Phase 2: Transitions & Feedback
 
-- [ ] Reuse existing countdown animation between levels
-- [ ] During countdown, display:
+- [x] Reuse existing countdown animation between levels
+- [x] During countdown, display:
   - Next level match goal
   - New category (if any)
-- [ ] Hide category info if no new category is being introduced
+- [x] Hide category info if no new category is being introduced
 
 ### Phase 3: Config-Driven Category Management
 
-- [ ] Categories should unlock in fixed order:
+- [x] Categories should unlock in fixed order:
   1. Smileys
   2. People
   3. Animals & Nature
@@ -36,7 +36,7 @@
   7. Objects
   8. Symbols
   9. Flags
-- [ ] Logic should pull active category list from config based on level number
+- [x] Logic should pull active category list from config based on level number
 - [ ] Future: allow categories per level to be set manually (for custom levels)
 
 ### Phase 4: Polish & Tuning
@@ -88,8 +88,17 @@
 ---
 
 ## Debug
-- [ ] Press "l" to restart the same level
-- [ ] Press "n" to skip to the next level
+- [x] Press "l" to restart the same level
+- [x] Press "n" to skip to the next level
+
+---
+
+## Mobile
+
+- [ ] Make game responsive
+- [ ] Optimize on mobile screens
+
+---
 
 ## Controls
 - [ ] Make it so I can click and drag the emoji list up and down
