@@ -187,7 +187,12 @@ function initGame() {
     // Reset UI with error handling
     if (scoreElement) scoreElement.textContent = score;
     if (levelElement) levelElement.textContent = level;
-    if (timerFillElement) timerFillElement.style.width = '100%';
+    if (timerFillElement) {
+        timerFillElement.style.width = '100%';
+        // Explicitly set the initial timer color to green
+        timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+        timerFillElement.style.animation = 'none';
+    }
     if (timerTextElement) timerTextElement.textContent = timeLeft;
     
     // Create category tabs

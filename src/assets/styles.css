@@ -114,8 +114,8 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* background: rgba(255, 255, 255, 0.8); */
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .score-level-box {
@@ -135,7 +135,7 @@ h1 {
 }
 
 .score-level-value {
-    font-size: clamp(2em, 8vh, 4.5em); /* Base size with upper limit */
+    font-size: 36px; /* Base size with upper limit */
     transform: scale(calc(1 / (1 + (var(--value-length, 1) * 0.1)))); /* Shrinks as digits increase */
     font-weight: 800; /* Increased from bold */
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
@@ -203,7 +203,8 @@ h1 {
 }
 
 #timer-text {
-    text-align: center;
+    padding-right: 16px;
+    text-align: right;
     font-weight: bold;
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -243,7 +244,7 @@ h1 {
 }
 
 #target-emoji {
-    font-size: 128px; /* Increased by 20% from 60px */
+    font-size: 164px; /* Increased by 20% from 60px */
     line-height: 1;
     text-align: center;
     min-height: 72px; /* Increased to match font size */
@@ -321,7 +322,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    height: 260px; /* Height for 6.5 rows */
+    height: 312px; /* Increased by 20% from 260px */
     overflow-y: auto;
     overflow-x: hidden;
     padding: 15px 16px; /* Add horizontal padding to align with the game card content */
