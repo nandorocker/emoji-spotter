@@ -358,7 +358,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    height: 312px; /* Increased by 20% from 260px */
+    height: 400px; /* Increased by 20% from 260px */
     overflow-y: auto;
     overflow-x: hidden;
     padding: 15px 16px; /* Add horizontal padding to align with the game card content */
