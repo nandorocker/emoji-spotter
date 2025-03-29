@@ -1,2 +1,3 @@
-- always use pnpm instead of npm
-- don't start the server after every iteration; assume it's already running
+- always use pnpm instead of npm.
+- explain your decisions as little as possible, describe your steps minimally.
+- don't start the server after every iteration; assume it's already running.
