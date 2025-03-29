@@ -836,14 +836,6 @@ window.addEventListener('load', () => {
 
         // Add keyboard event listeners for debug mode
         document.addEventListener('keydown', handleKeyPress);
-        
-        // Add click handler for settings icon
-        const settingsIcon = document.getElementById('settings-icon');
-        if (settingsIcon) {
-            settingsIcon.addEventListener('click', () => {
-                toggleDebugMode();
-            });
-        }
     } catch (error) {
         console.error("Error initializing game:", error);
         // Fallback to direct game start if there's an error

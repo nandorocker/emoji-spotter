@@ -80,7 +80,7 @@ body {
 
 /* Settings icon in top right */
 .settings-container {
-    cursor: pointer;
+    cursor: not-allowed;
     justify-self: end;
     width: 36px;
     height: 36px;
@@ -88,15 +88,15 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background-color 0.2s;
+    opacity: 0.5;
 }
 
 .settings-container:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: transparent;
 }
 
 #settings-icon {
-    color: white;
+    color: rgba(255, 255, 255, 0.6);
     width: 24px;
     height: 24px;
 }
@@ -672,7 +672,7 @@ body {
 /* Find this emoji text - simplified but still visually interesting */
 .find-emoji-title-inside {
     text-align: center;
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 700;
     margin: 0 0 20px 0;
     letter-spacing: 0.5px;
