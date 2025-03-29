@@ -6,47 +6,50 @@
     <title>Emoji Spotter</title>
     <link rel="stylesheet" href="./assets/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Add Lucide Icon Library -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div class="particles-container" id="particles-js"></div>
     
-    <div class="game-container">
-        <!-- Title moved outside the box -->
-        <h1>Emoji Spotter</h1>
+    <header class="game-header">
+        <!-- Game logo in top left -->
+        <div class="game-logo">Emoji Spotter</div>
         
+        <!-- Score and level in top center -->
+        <div class="score-level-display">
+            <span>Level: <span id="level">1</span></span>
+            <span class="level-divider">•</span>
+            <span>Score: <span id="score">0</span></span>
+        </div>
+        
+        <!-- Settings icon in top right -->
+        <div class="settings-container">
+            <i data-lucide="settings" id="settings-icon"></i>
+        </div>
+    </header>
+    
+    <div class="game-container">
         <!-- Main game card that contains everything else -->
         <div class="game-card">
+            
+            <!-- Find this emoji title moved between timer and emoji row -->
+            <h2 class="find-emoji-title-inside">Find this emoji:</h2>
+            
+            <!-- Target emoji box only (removed score/level boxes) -->
+            <div class="emoji-box-container">
+                <div class="emoji-box">
+                    <div id="target-emoji"></div>
+                    <div id="target-pulse"></div>
+                </div>
+            </div>
+            
             <!-- Timer moved above the emoji row -->
             <div class="timer-container">
                 <div id="timer-bar">
                     <div id="timer-fill"><p id="timer-text">30</p></div>
                 </div>
             </div>
-            
-            <!-- Find this emoji title moved between timer and emoji row -->
-            <h2 class="find-emoji-title-inside">Find this emoji:</h2>
-            
-            <!-- Three boxes layout for score, emoji, and level -->
-            <div class="info-boxes-container">
-                <!-- Score box -->
-                <div class="info-box score-level-box">
-                    <div class="score-level-label">Score</div>
-                    <div class="score-level-value" id="score">0</div>
-                </div>
-                
-                <!-- Target emoji box (square) -->
-                <div class="info-box emoji-box">
-                    <div id="target-emoji"></div>
-                    <div id="target-pulse"></div>
-                </div>
-                
-                <!-- Level box -->
-                <div class="info-box score-level-box">
-                    <div class="score-level-label">Level</div>
-                    <div class="score-level-value" id="level">1</div>
-                </div>
-            </div>
-            
             <div class="emoji-selector-container">
                 <div class="emoji-grid" id="emoji-grid">
                     <!-- Emojis will be dynamically added here -->

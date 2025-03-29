@@ -72,6 +72,15 @@ Introduce a progressively harder wave-based structure where the player must matc
 ## Difficulty
 - Select difficulty at the beginning
 - Easy mode (default):
-  - Gives hints
+  - Hints are on ALL the time
+  - When you get an icon right you get 5 seconds
+  - Level clocks are longer
+  - No Flags **ever**
+- Medium mode:
+  - Tab hints after 3s; emoji hint after 6s
+  - Flags only at a high level
+  - Level clocks are medium
 - Hard mode:
-  - No hints
+  - No tab hints ever
+  - All emojis revealed from the start
+  - Level clocks are shortest

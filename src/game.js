@@ -494,10 +494,19 @@ function checkLevelProgress() {
     const levelThreshold = level * 100;
     if (score >= levelThreshold) {
         level++;
+        
+        // Update level in both header and game display
         if (levelElement) {
             levelElement.textContent = level;
             levelElement.classList.add('level-up');
             setTimeout(() => levelElement.classList.remove('level-up'), 1000);
+        }
+        
+        const levelDisplay = document.getElementById('level-display');
+        if (levelDisplay) {
+            levelDisplay.textContent = level;
+            levelDisplay.classList.add('level-up');
+            setTimeout(() => levelDisplay.classList.remove('level-up'), 1000);
         }
         
         // Extend time as a reward
@@ -718,7 +727,7 @@ function toggleDebugMode() {
             debugIndicator = document.createElement('div');
             debugIndicator.id = 'debug-indicator';
             debugIndicator.style.position = 'fixed';
-            debugIndicator.style.top = '10px';
+            debugIndicator.style.bottom = '10px'; // Changed from top to bottom
             debugIndicator.style.right = '10px';
             debugIndicator.style.background = 'rgba(0, 0, 0, 0.7)';
             debugIndicator.style.color = '#4CAF50';
@@ -813,6 +822,9 @@ if (startGameButton) {
 // Initialize game on load with error handling
 window.addEventListener('load', () => {
     try {
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
         // Make sure overlay is hidden initially
         if (countdownOverlay) countdownOverlay.style.display = 'none';
         
@@ -824,6 +836,14 @@ window.addEventListener('load', () => {
 
         // Add keyboard event listeners for debug mode
         document.addEventListener('keydown', handleKeyPress);
+        
+        // Add click handler for settings icon
+        const settingsIcon = document.getElementById('settings-icon');
+        if (settingsIcon) {
+            settingsIcon.addEventListener('click', () => {
+                toggleDebugMode();
+            });
+        }
     } catch (error) {
         console.error("Error initializing game:", error);
         // Fallback to direct game start if there's an error

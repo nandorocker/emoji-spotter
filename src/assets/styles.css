@@ -35,33 +35,80 @@ body {
     z-index: -1;
 }
 
-/* Game title outside of the box */
-h1 {
-    text-align: center;
-    color: white;
-    margin-bottom: 2rem;
-    font-size: 40px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+/* Game header with logo, score/level, and settings */
+.game-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 100;
+}
+
+/* Game logo in top left */
+.game-logo {
+    font-size: 24px;
+    font-weight: 700;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    justify-self: start;
 }
 
-/* Find this emoji text - now inside the box */
-.find-emoji-title-inside {
-    text-align: center;
-    color: var(--text-color);
-    margin: 0 0 12px 0;
-    font-size: 20px;
-    font-weight: 600;
+/* Score and level in top center */
+.score-level-display {
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: center;
+    padding: 8px 16px;
 }
 
+.level-divider {
+    opacity: 0.5;
+    margin: 0 5px;
+}
+
+/* Settings icon in top right */
+.settings-container {
+    cursor: pointer;
+    justify-self: end;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.settings-container:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#settings-icon {
+    color: white;
+    width: 24px;
+    height: 24px;
+}
+
+/* Adjust game container to account for fixed header */
 .game-container {
+    margin-top: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 500px;
+    max-width: 625px; /* Increased by 25% from 500px */
     position: relative;
     z-index: 10;
 }
@@ -71,8 +118,8 @@ h1 {
     border-radius: 24px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 500px;
-    min-width: 450px;
+    max-width: 625px; /* Increased by 25% from 500px */
+    min-width: 560px; /* Increased by 25% from 450px */
     padding: 28px;
     display: flex;
     flex-direction: column;
@@ -105,17 +152,6 @@ h1 {
     justify-content: center;
     padding: 15px;
     border-radius: 16px;
-}
-
-/* Keep the emoji box white with shadow, but remove for score/level */
-.emoji-box {
-    aspect-ratio: 1/1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* background: rgba(255, 255, 255, 0.8); */
-    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .score-level-box {
@@ -607,4 +643,41 @@ h1 {
 .tutorial-step p {
     font-size: 16px;
     line-height: 1.5;
+}
+
+/* Emoji box container - centered styling */
+.emoji-box-container {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 20px;
+    width: 100%;
+}
+
+.emoji-box {
+    width: 180px;
+    height: 180px;
+    aspect-ratio: 1/1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.emoji-box:hover {
+    transform: translateY(-2px) scale(1.15);
+    /* box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); */
+}
+
+/* Find this emoji text - simplified but still visually interesting */
+.find-emoji-title-inside {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.5px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
 }
