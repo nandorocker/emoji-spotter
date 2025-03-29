@@ -49,11 +49,15 @@ Introduce a progressively harder wave-based structure where the player must matc
 
 ---
 
+## Controls
+- Make it so I can click and drag the emoji list up and down
+
 ## Combos
 - Rethink this feature
 
 ## Hints only after a while
-- Make the "hint" appear only after a while
+- Make the target emoji's tab appear only after a few seconds (2s)
+- After 5s, make the emoji background pulsate and glow a little and flash VERY mildly
 
 ## Overlay system
 - If there's already a message, and another one appears, those are overlapping
@@ -64,3 +68,10 @@ Introduce a progressively harder wave-based structure where the player must matc
 
 ## Reverse Mode
 - Game describes an emoji (or just uses the name) and you have to find it
+
+## Difficulty
+- Select difficulty at the beginning
+- Easy mode (default):
+  - Gives hints
+- Hard mode:
+  - No hints

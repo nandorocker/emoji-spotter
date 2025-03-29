@@ -39,8 +39,8 @@ body {
 h1 {
     text-align: center;
     color: white;
-    margin-bottom: 10px;
-    font-size: 36px;
+    margin-bottom: 2rem;
+    font-size: 40px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
@@ -128,33 +128,24 @@ h1 {
 .score-level-label {
     font-size: 16px;
     margin-bottom: 5px;
-    font-weight: 600;
+    font-weight: 900;
     color: #4a4a68;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .score-level-value {
-    font-size: 32px;
-    font-weight: bold;
+    font-size: clamp(2em, 8vh, 4.5em); /* Base size with upper limit */
+    transform: scale(calc(1 / (1 + (var(--value-length, 1) * 0.1)))); /* Shrinks as digits increase */
+    font-weight: 800; /* Increased from bold */
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
     display: inline-block;
     transition: all 0.3s ease;
-}
-
-.score-level-value:after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    opacity: 0.6;
-    border-radius: 4px;
+    text-shadow: 0 2px 10px rgba(82, 113, 255, 0.3); /* Added text shadow */
+    transform: translateZ(0); /* For better rendering of text shadow with gradient */
 }
 
 #score, #level {
@@ -221,10 +212,10 @@ h1 {
 }
 
 #target-emoji {
-    font-size: 60px;
+    font-size: 128px; /* Increased by 20% from 60px */
     line-height: 1;
     text-align: center;
-    min-height: 60px;
+    min-height: 72px; /* Increased to match font size */
     z-index: 2;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
     transition: transform 0.3s ease;
@@ -232,8 +223,8 @@ h1 {
 
 #target-pulse {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 96px; /* Increased to match larger emoji */
+    height: 96px; /* Increased to match larger emoji */
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 189, 89, 0.4) 0%, rgba(255, 189, 89, 0) 70%);
     z-index: 1;
@@ -250,13 +241,15 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin: 0 -28px; /* Negative margin to extend beyond the padding of game-card */
+    width: calc(100% + 56px); /* Width calculation to account for the game-card padding */
 }
 
 .category-tabs {
     display: flex;
     overflow-x: auto;
     gap: 8px;
-    padding-bottom: 5px;
+    padding: 0 28px 5px 28px; /* Add horizontal padding to align with the game card content */
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) transparent;
 }
@@ -300,9 +293,9 @@ h1 {
     height: 260px; /* Height for 6.5 rows */
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 15px;
+    padding: 15px 16px; /* Add horizontal padding to align with the game card content */
     background: rgba(255, 255, 255, 0.8);
-    border-radius: 16px;
+    border-radius: 0; /* Remove border radius for end-to-end effect */
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) transparent;
