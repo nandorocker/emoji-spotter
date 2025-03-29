@@ -665,7 +665,7 @@ body {
 }
 
 .emoji-box:hover {
-    transform: translateY(-2px) scale(1.15);
+    transform: translateY(-2px) scale(1.10);
     /* box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); */
 }
 
@@ -680,4 +680,12 @@ body {
     left: 50%;
     transform: translateX(-50%);
     display: inline-block;
+}
+
+.emoji, #target-emoji {
+    user-select: none;
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Internet Explorer/Edge */
+    cursor: arrow;
 }
