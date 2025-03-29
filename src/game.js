@@ -15,6 +15,16 @@ let isFirstGame = true;
 let particles = null;
 let debugMode = false; // Add debug mode flag
 
+// Initialize drag scrolling variables
+let isDragging = false;
+let startY = 0;
+let scrollTop = 0;
+let moveDetected = false;
+let scrollVelocity = 0;
+let lastY = 0;
+let lastTime = 0;
+let animationFrameId = null;
+
 // DOM elements - with error handling
 const scoreElement = document.getElementById('score');
 const levelElement = document.getElementById('level');
@@ -210,6 +220,9 @@ function initGame() {
     
     // Start the timer
     startTimer();
+    
+    // Setup drag scrolling
+    setupDragScrolling();
 }
 
 // Create tabs for emoji categories
@@ -320,9 +333,32 @@ function generateEmojiGrid(activeCategory = null) {
             emojiElement.className = 'emoji';
             emojiElement.textContent = emoji;
             emojiElement.dataset.category = category;
+            emojiElement.dataset.emoji = emoji;
             
-            emojiElement.addEventListener('click', () => {
-                handleEmojiClick(emoji, emojiElement);
+            // Use mouseup instead of click to better control when emojis are selected
+            emojiElement.addEventListener('mousedown', (e) => {
+                // Mark this element as potentially receiving a click
+                emojiElement.dataset.clickStart = 'true';
+            });
+            
+            emojiElement.addEventListener('mouseup', (e) => {
+                // Only handle as a click if we've marked it as clickStart and not moved
+                if (emojiElement.dataset.clickStart === 'true' && !moveDetected) {
+                    handleEmojiClick(emoji, emojiElement);
+                }
+                delete emojiElement.dataset.clickStart;
+            });
+            
+            // For touch devices
+            emojiElement.addEventListener('touchstart', (e) => {
+                emojiElement.dataset.clickStart = 'true';
+            });
+            
+            emojiElement.addEventListener('touchend', (e) => {
+                if (emojiElement.dataset.clickStart === 'true' && !moveDetected) {
+                    handleEmojiClick(emoji, emojiElement);
+                }
+                delete emojiElement.dataset.clickStart;
             });
             
             emojiContainer.appendChild(emojiElement);
@@ -929,5 +965,141 @@ function handleEmojiGridScroll() {
     if (visibleCategory && visibleCategory !== selectedCategory) {
         selectedCategory = visibleCategory;
         updateCategoryTabs();
+    }
+}
+
+// Start drag scrolling for emoji grid
+function setupDragScrolling() {
+    if (!emojiGridElement) return;
+    
+    // Clean up any existing event listeners
+    emojiGridElement.removeEventListener('mousedown', startDrag);
+    document.removeEventListener('mousemove', drag);
+    document.removeEventListener('mouseup', stopDrag);
+    emojiGridElement.removeEventListener('touchstart', startDrag);
+    document.removeEventListener('touchmove', drag);
+    document.removeEventListener('touchend', stopDrag);
+    
+    // Mouse events
+    emojiGridElement.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDrag);
+    
+    // Touch events for mobile
+    emojiGridElement.addEventListener('touchstart', startDrag);
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('touchend', stopDrag);
+    
+    // Cancel animation frame if it's running
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+    }
+}
+
+// Start drag operation
+function startDrag(e) {
+    // Only handle primary mouse button (left click)
+    if (e.type === 'mousedown' && e.button !== 0) return;
+    
+    // Cancel any ongoing momentum scrolling
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    
+    // Store initial positions
+    isDragging = true;
+    moveDetected = false;
+    startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+    lastY = startY;
+    lastTime = Date.now();
+    scrollTop = emojiGridElement.scrollTop;
+    scrollVelocity = 0;
+    
+    // Change cursor
+    emojiGridElement.classList.add('grabbing');
+    
+    // Prevent default to avoid text selection during drag
+    e.preventDefault();
+}
+
+// Handle drag movement
+function drag(e) {
+    if (!isDragging) return;
+    
+    // Calculate new position
+    const y = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    const walkY = (startY - y);
+    
+    // Track velocity for momentum
+    const now = Date.now();
+    const elapsed = now - lastTime;
+    if (elapsed > 0) {
+        scrollVelocity = (lastY - y) / elapsed * 15; // Scale factor for momentum
+    }
+    lastY = y;
+    lastTime = now;
+    
+    // Set flag to detect movement - use a smaller threshold for better detection
+    if (Math.abs(walkY) > 3) {
+        moveDetected = true;
+        
+        // If we've detected movement, prevent the click from firing later
+        const emojis = emojiGridElement.querySelectorAll('.emoji');
+        emojis.forEach(emoji => {
+            delete emoji.dataset.clickStart;
+        });
+        
+        // Prevent default after confirming movement
+        e.preventDefault();
+    }
+    
+    // Update scroll position
+    emojiGridElement.scrollTop = scrollTop + walkY;
+}
+
+// End drag operation
+function stopDrag(e) {
+    if (!isDragging) return;
+    
+    // Start momentum scrolling if there's velocity
+    if (Math.abs(scrollVelocity) > 0.5 && moveDetected) {
+        momentum();
+    }
+    
+    // Only prevent default emoji click if we actually moved
+    if (moveDetected && e && e.type !== 'touchend') {
+        e.preventDefault();
+        
+        // Temporary disable emoji clicks to avoid accidental selections
+        const emojis = emojiGridElement.querySelectorAll('.emoji');
+        emojis.forEach(emoji => {
+            emoji.style.pointerEvents = 'none';
+        });
+        
+        // Re-enable after a short delay
+        setTimeout(() => {
+            emojis.forEach(emoji => {
+                emoji.style.pointerEvents = 'auto';
+            });
+        }, 100);
+    }
+    
+    isDragging = false;
+    emojiGridElement.classList.remove('grabbing');
+}
+
+// Momentum scrolling animation
+function momentum() {
+    // Continue scrolling with momentum
+    emojiGridElement.scrollTop += scrollVelocity;
+    // Apply friction to gradually slow down
+    scrollVelocity *= 0.95;
+    
+    // Stop when velocity is very small
+    if (Math.abs(scrollVelocity) > 0.1) {
+        animationFrameId = requestAnimationFrame(momentum);
+    } else {
+        animationFrameId = null;
     }
 }

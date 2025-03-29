@@ -357,7 +357,7 @@ body {
 .emoji-grid {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 15px;
     height: 400px; /* Increased by 20% from 260px */
     overflow-y: auto;
     overflow-x: hidden;
