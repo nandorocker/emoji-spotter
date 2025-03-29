@@ -602,6 +602,7 @@ function updateTimer() {
         timerFillElement.style.background = 'linear-gradient(90deg, #ff9500, #ffbd59)';
         timerFillElement.style.animation = 'none';
     } else {
+        // Green color for good time remaining (more than 10 seconds)
         timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
         timerFillElement.style.animation = 'none';
     }
