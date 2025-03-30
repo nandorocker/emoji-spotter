@@ -20,6 +20,21 @@ let matchesRequired = 0;
 let matchesCompleted = 0;
 let availableCategories = [];
 
+// Scoring system variables
+let targetRevealTime = 0;     // When the current target emoji was revealed
+let incorrectAttempts = 0;    // Number of incorrect attempts for current target emoji
+let categoryBonusMultipliers = {
+    smileys: 1,
+    people: 1.1,
+    animalsAndNature: 1.2,
+    foodAndDrink: 1.3,
+    activity: 1.4,
+    travelAndPlaces: 1.5,
+    objects: 1.6,
+    symbols: 1.7,
+    flags: 2
+};
+
 // Initialize drag scrolling variables
 let isDragging = false;
 let startY = 0;
@@ -420,8 +435,13 @@ function handleEmojiClick(emoji, emojiElement) {
         const now = Date.now();
         lastFoundTime = now;
         
-        // Update score and level progress counters
-        const pointsEarned = 10 * level;
+        // Get emoji category
+        const category = emojiElement.dataset.category;
+        
+        // Calculate score with bonuses
+        const pointsEarned = calculateScore(category);
+        
+        // Update counters
         score += pointsEarned;
         emojisFound++;
         matchesCompleted++;
@@ -433,8 +453,13 @@ function handleEmojiClick(emoji, emojiElement) {
             setTimeout(() => scoreElement.classList.remove('pulse'), 500);
         }
         
-        // Show message
-        showMessage(`+${pointsEarned} pts!`, '#4CAF50');
+        // Show message with score breakdown
+        if (debugMode) {
+            const timeTaken = ((now - targetRevealTime) / 1000).toFixed(1);
+            showMessage(`+${pointsEarned} pts! (${timeTaken}s, ${incorrectAttempts} errors)`, '#4CAF50');
+        } else {
+            showMessage(`+${pointsEarned} pts!`, '#4CAF50');
+        }
         
         // Show the emoji with a "correct" animation
         highlightEmoji(emoji, emojiElement);
@@ -447,8 +472,10 @@ function handleEmojiClick(emoji, emojiElement) {
             setNewTargetEmoji();
         }
     } else {
-        // Wrong emoji, penalize
-        // Small time penalty (2 seconds)
+        // Wrong emoji, track this attempt
+        incorrectAttempts++;
+        
+        // Apply time penalty (2 seconds)
         timeLeft = Math.max(1, timeLeft - 2);
         updateTimer();
         
@@ -902,6 +929,10 @@ function setNewTargetEmoji() {
     if (targetCategory) {
         targetCategory.style.border = '2px solid #ff9500';
     }
+    
+    // Reset scoring variables for the new target
+    targetRevealTime = Date.now();
+    incorrectAttempts = 0;
 }
 
 // Start the game timer
@@ -1420,4 +1451,39 @@ function momentum() {
     } else {
         animationFrameId = null;
     }
+}
+
+// Calculate score with bonuses based on speed and accuracy
+function calculateScore(category) {
+    // Base points for finding the emoji
+    const basePoints = 10 * level;
+    
+    // Calculate speed bonus
+    const timeTaken = (Date.now() - targetRevealTime) / 1000; // in seconds
+    let speedMultiplier = 1.0;
+    
+    // Faster finds get higher multipliers
+    if (timeTaken < 1.5) {
+        speedMultiplier = 2.0; // Very fast (under 1.5 seconds)
+    } else if (timeTaken < 3) {
+        speedMultiplier = 1.5; // Fast (1.5 to 3 seconds)
+    } else if (timeTaken < 5) {
+        speedMultiplier = 1.2; // Decent (3 to 5 seconds)
+    }
+    
+    // Penalty for mistakes
+    const accuracyMultiplier = Math.max(0.5, 1 - (incorrectAttempts * 0.2));
+    
+    // Category difficulty multiplier
+    const categoryMultiplier = categoryBonusMultipliers[category] || 1;
+    
+    // Calculate total score with all multipliers
+    const totalPoints = Math.round(basePoints * speedMultiplier * accuracyMultiplier * categoryMultiplier);
+    
+    // For debugging
+    if (debugMode) {
+        console.log(`Score breakdown: Base=${basePoints}, Speed=${speedMultiplier.toFixed(1)}x, Accuracy=${accuracyMultiplier.toFixed(1)}x, Category=${categoryMultiplier.toFixed(1)}x, Total=${totalPoints}`);
+    }
+    
+    return totalPoints;
 }

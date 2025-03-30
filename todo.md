@@ -49,42 +49,37 @@
 
 ## To-Do: Implement Scoring System
 
-### Base
-- [ ] +20 points per correct emoji match.
+### Phase 1: Basic Scoring Framework
+- [ ] Create `useScoreStore` or integrate scoring into existing game state store.
+- [ ] Add function to award base points on correct emoji match.
+- [ ] Add persistent `score` state across levels.
 
-### Bonuses
-- [ ] Speed bonus based on time-to-match.
-- [ ] Accuracy bonus if correct on first tap.
-- [ ] Category bonus (e.g. Flags, Symbols).
-- [ ] Confusable emoji bonus (first-try only).
+### Phase 2: Speed Tracking
+- [ ] Start timer when target emoji is revealed.
+- [ ] Capture time delta on correct match.
+- [ ] Store delta in state for bonus calculation.
 
-### Penalties
-- [ ] -5 seconds per incorrect tap.
+### Phase 3: Accuracy Tracking
+- [ ] Track number of incorrect taps per emoji prompt.
+- [ ] Reset error count at start of each prompt.
 
-### Config
-- [ ] All bonus thresholds and values configurable.
-- [ ] Define bonus values per category.
-- [ ] Maintain list of confusable emoji sets.
+### Phase 4: Bonus Calculation
+- [ ] Implement bonus logic using speed delta and mistake count.
+- [ ] Add category-based bonus mapping (config-driven).
+- [ ] Add confusable emoji bonus logic (requires static emoji group config).
 
-### Optional
-- [ ] Add score breakdown for debugging or UI display.
-- [ ] Add hooks for analytics/events if needed later.
+### Phase 5: Score Update Logic
+- [ ] Combine base + bonus into total for each correct emoji.
+- [ ] Update global score accordingly.
+- [ ] Log or store breakdown (for debugging/analytics).
 
-## Difficulty
-- [ ] Select difficulty at the beginning
-- [ ] Easy mode (default):
-  - [ ] Hints are on ALL the time
-  - [ ] When you get an icon right you get 5 seconds
-  - [ ] Level clocks are longer
-  - [ ] No Flags **ever**
-- [ ] Medium mode:
-  - [ ] Tab hints after 3s; emoji hint after 6s
-  - [ ] Flags only at a high level
-  - [ ] Level clocks are medium
-- [ ] Hard mode:
-  - [ ] No tab hints ever
-  - [ ] All emojis revealed from the start
-  - [ ] Level clocks are shortest
+### Phase 6: Time Penalty
+- [ ] On incorrect tap, subtract time from level timer.
+- [ ] Use existing timer mutation (no direct timer manipulation).
+
+### Phase 7: Debug / UI Hook-up
+- [ ] Expose live score for HUD.
+- [ ] (Optional) Add a debug log or floating breakdown panel for testing.
 
 ---
 
