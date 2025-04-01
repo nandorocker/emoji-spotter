@@ -19,6 +19,7 @@ let currentLevelConfig = null;
 let matchesRequired = 0;
 let matchesCompleted = 0;
 let availableCategories = [];
+let isPaused = false; // Track if game is paused
 
 // Scoring system variables
 let targetRevealTime = 0;     // When the current target emoji was revealed
@@ -1266,6 +1267,12 @@ window.addEventListener('load', () => {
 
 // Handle keyboard shortcuts for debug mode
 function handleKeyPress(event) {
+    // Toggle pause with ESC key
+    if (event.key === 'Escape') {
+        togglePause();
+        return;
+    }
+
     // Toggle debug mode with 'd' key
     if (event.key === 'd') {
         toggleDebugMode();
@@ -1539,4 +1546,72 @@ function calculateScore(category) {
     }
     
     return totalPoints;
+}
+
+// Toggle game pause
+function togglePause() {
+    if (isGameOver) return;
+    
+    isPaused = !isPaused;
+    
+    if (isPaused) {
+        // Pause the game
+        if (gameTimer) {
+            clearInterval(gameTimer);
+            gameTimer = null;
+        }
+        
+        // Show pause overlay
+        showPauseOverlay();
+    } else {
+        // Resume the game
+        startTimer();
+        
+        // Hide pause overlay
+        hidePauseOverlay();
+    }
+}
+
+// Show pause overlay
+function showPauseOverlay() {
+    const pauseOverlay = document.createElement('div');
+    pauseOverlay.id = 'pause-overlay';
+    pauseOverlay.style.position = 'fixed';
+    pauseOverlay.style.top = '0';
+    pauseOverlay.style.left = '0';
+    pauseOverlay.style.width = '100%';
+    pauseOverlay.style.height = '100%';
+    pauseOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    pauseOverlay.style.display = 'flex';
+    pauseOverlay.style.flexDirection = 'column';
+    pauseOverlay.style.alignItems = 'center';
+    pauseOverlay.style.justifyContent = 'center';
+    pauseOverlay.style.zIndex = '500';
+    pauseOverlay.style.backdropFilter = 'blur(5px)';
+    
+    // Pause text
+    const pauseText = document.createElement('div');
+    pauseText.textContent = 'PAUSED';
+    pauseText.style.color = '#fff';
+    pauseText.style.fontSize = '48px';
+    pauseText.style.fontWeight = 'bold';
+    pauseText.style.marginBottom = '20px';
+    
+    // Instructions
+    const instructions = document.createElement('div');
+    instructions.textContent = 'Press ESC to resume';
+    instructions.style.color = '#fff';
+    instructions.style.fontSize = '24px';
+    
+    pauseOverlay.appendChild(pauseText);
+    pauseOverlay.appendChild(instructions);
+    document.body.appendChild(pauseOverlay);
+}
+
+// Hide pause overlay
+function hidePauseOverlay() {
+    const pauseOverlay = document.getElementById('pause-overlay');
+    if (pauseOverlay) {
+        document.body.removeChild(pauseOverlay);
+    }
 }

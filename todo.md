@@ -103,6 +103,20 @@
 
 ---
 
+## Start Screen
+- [ ] Make a proper "start screen"
+
+---
+
+## Practice Mode
+- [ ] Create a "Practice Mode"
+  - [ ] No Timer
+  - [ ] Dropdown to select which categories are enabled/disabled (leftmost category tab)
+  - [ ] By default, show only the "Smileys" category
+- [ ] Add "Practice Mode" button to start screen
+
+---
+
 # Notes
 
 ## Onboarding
