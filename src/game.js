@@ -67,6 +67,7 @@ const countdownOverlay = document.getElementById('countdown-overlay');
 const countdownElement = document.getElementById('countdown');
 const tutorialModal = document.getElementById('tutorial-modal');
 const startGameButton = document.getElementById('start-game-button');
+const preloader = document.getElementById('preloader');
 
 // Set initial display states
 if (countdownOverlay) countdownOverlay.style.display = 'none';
@@ -293,8 +294,14 @@ function createCategoryTabs() {
         categoryTabsElement.appendChild(tab);
     });
     
-    // Initialize Lucide icons after adding to DOM
-    lucide.createIcons();
+    // Initialize Lucide icons after adding to DOM if available
+    if (window.lucide) {
+        try {
+            lucide.createIcons();
+        } catch (error) {
+            console.warn("Error initializing Lucide icons:", error);
+        }
+    }
 }
 
 // Format category name for display
@@ -1190,24 +1197,70 @@ function loadLevelConfig(currentLevel) {
 // Initialize game on load with error handling
 window.addEventListener('load', () => {
     try {
-        // Initialize Lucide icons
-        lucide.createIcons();
-        
-        // Make sure overlay is hidden initially
-        if (countdownOverlay) countdownOverlay.style.display = 'none';
-        
-        // Initialize particle effects
-        initParticles();
-        
-        // Show tutorial or start game
-        showTutorial();
+        // Show preloader while resources are loading
+        if (preloader) {
+            preloader.style.display = 'flex';
+        }
 
-        // Add keyboard event listeners for debug mode
-        document.addEventListener('keydown', handleKeyPress);
+        // Start resource loading and game initialization
+        const resourcesLoadedPromise = Promise.all([
+            // Add promises for any resources that need to be loaded
+            new Promise(resolve => {
+                if (document.readyState === 'complete') {
+                    resolve();
+                } else {
+                    window.addEventListener('DOMContentLoaded', resolve);
+                }
+            }),
+            new Promise(resolve => setTimeout(resolve, 1000)) // Minimum display time for preloader
+        ]);
+
+        // When resources are loaded, hide preloader and initialize game
+        resourcesLoadedPromise.then(() => {
+            // Hide preloader with fade-out effect
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.visibility = 'hidden';
+                    preloader.style.display = 'none';
+                }, 500);
+            }
+
+            // Initialize Lucide icons if available
+            if (window.lucide) {
+                lucide.createIcons();
+            } else {
+                console.warn("Lucide icons library not loaded, skipping icon initialization");
+            }
+            
+            // Make sure overlay is hidden initially
+            if (countdownOverlay) countdownOverlay.style.display = 'none';
+            
+            // Initialize particle effects
+            initParticles();
+            
+            // Show tutorial or start game
+            showTutorial();
+
+            // Add keyboard event listeners for debug mode
+            document.addEventListener('keydown', handleKeyPress);
+        }).catch(error => {
+            console.error("Error during resource loading:", error);
+            // Hide preloader even if there was an error
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
+            // Fallback to direct game start
+            setTimeout(initGame, 100);
+        });
     } catch (error) {
         console.error("Error initializing game:", error);
+        // Hide preloader even if there was an error
+        if (preloader) {
+            preloader.style.display = 'none';
+        }
         // Fallback to direct game start if there's an error
-        initGame();
+        setTimeout(initGame, 500);
     }
 });
 
