@@ -128,6 +128,12 @@
 
 ---
 
+## Technical
+- [ ] Minify CSS and whatever else
+- [ ] When counting down, either have the tiles in already, or hide everything (including main window)
+
+---
+
 # Notes
 
 ## Onboarding

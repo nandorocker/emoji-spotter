@@ -1272,6 +1272,15 @@ window.addEventListener('load', () => {
             preloader.style.display = 'flex';
         }
 
+        // Add click handler to settings icon
+        const settingsIcon = document.getElementById('settings-icon');
+        const settingsContainer = document.querySelector('.settings-container');
+        if (settingsContainer) {
+            settingsContainer.addEventListener('click', () => {
+                togglePause();
+            });
+        }
+
         // Start resource loading and game initialization
         const resourcesLoadedPromise = Promise.all([
             // Add promises for any resources that need to be loaded
@@ -1669,6 +1678,8 @@ function showSettingsModal() {
     settingsContent.style.maxWidth = '450px';
     settingsContent.style.position = 'relative';
     
+    settingsContent.style.position = 'relative';
+    
     // Settings title
     const title = document.createElement('h2');
     title.textContent = 'Settings';
@@ -1826,23 +1837,6 @@ function showSettingsModal() {
     creditsContainer.style.color = '#999';
     creditsContainer.textContent = 'Emoji Spotter v1.0 • Created with ❤️ • 2025';
     
-    // Resume button
-    const resumeButton = document.createElement('button');
-    resumeButton.textContent = 'Resume Game';
-    resumeButton.style.width = '100%';
-    resumeButton.style.padding = '12px';
-    resumeButton.style.marginTop = '30px';
-    resumeButton.style.background = 'linear-gradient(90deg, var(--primary-color), #7691ff)';
-    resumeButton.style.color = 'white';
-    resumeButton.style.border = 'none';
-    resumeButton.style.borderRadius = '30px';
-    resumeButton.style.fontSize = '16px';
-    resumeButton.style.fontWeight = '600';
-    resumeButton.style.cursor = 'pointer';
-    resumeButton.style.transition = 'all 0.3s';
-    resumeButton.style.boxShadow = '0 4px 15px rgba(82, 113, 255, 0.3)';
-    resumeButton.onclick = togglePause;
-    
     // Assemble settings modal
     settingsList.appendChild(soundVolumeContainer);
     settingsList.appendChild(emojiSizeContainer);
@@ -1850,7 +1844,6 @@ function showSettingsModal() {
     settingsContent.appendChild(title);
     settingsContent.appendChild(closeButton);
     settingsContent.appendChild(settingsList);
-    settingsContent.appendChild(resumeButton);
     settingsContent.appendChild(creditsContainer);
     
     settingsModal.appendChild(settingsContent);

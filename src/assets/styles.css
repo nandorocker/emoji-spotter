@@ -137,7 +137,7 @@ body {
 
 /* Settings icon in top right */
 .settings-container {
-    cursor: not-allowed;
+    cursor: pointer;
     justify-self: end;
     width: 36px;
     height: 36px;
@@ -149,7 +149,8 @@ body {
 }
 
 .settings-container:hover {
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 0.8;
 }
 
 #settings-icon {
