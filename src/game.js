@@ -25,7 +25,7 @@ let isPaused = false; // Track if game is paused
 let gameSettings = {
     soundVolume: 70, // Volume level 0-100
     isMuted: false, // Mute toggle
-    emojiSize: 'medium', // small, medium, large
+    emojiSize: 'small', // small, medium, large - small is default now
 };
 
 // Scoring system variables
@@ -373,6 +373,29 @@ function generateEmojiGrid(activeCategory = null) {
     // Only show categories available in the current level
     const categoriesToShow = availableCategories || ['smileys'];
     
+    // Get emoji size scale factors (more dramatic differences)
+    let fontSizeFactor = 1;
+    let itemSizeFactor = 1;
+    let gridColumns = 6; // Default columns
+    
+    switch (gameSettings.emojiSize) {
+        case 'small':
+            fontSizeFactor = 1; // This is now our baseline size
+            itemSizeFactor = 1;
+            gridColumns = 7; // More columns for small size
+            break;
+        case 'medium':
+            fontSizeFactor = 1.5;
+            itemSizeFactor = 1.3;
+            gridColumns = 5; // Medium columns
+            break;
+        case 'large':
+            fontSizeFactor = 2;
+            itemSizeFactor = 1.8;
+            gridColumns = 3; // Fewer columns for large size
+            break;
+    }
+    
     // Generate only the available emoji categories
     categoriesToShow.forEach((category, index) => {
         // Create an invisible marker for scroll detection
@@ -387,12 +410,28 @@ function generateEmojiGrid(activeCategory = null) {
         emojiContainer.className = 'emoji-category-container';
         emojiContainer.dataset.category = category;
         
+        // Apply grid template based on size setting
+        emojiContainer.style.display = 'grid';
+        emojiContainer.style.gridTemplateColumns = `repeat(${gridColumns}, 1fr)`;
+        emojiContainer.style.gap = `${8 * itemSizeFactor}px`;
+        emojiContainer.style.marginBottom = '16px';
+        
         emojis.forEach(emoji => {
             const emojiElement = document.createElement('div');
             emojiElement.className = 'emoji';
             emojiElement.textContent = emoji;
             emojiElement.dataset.category = category;
             emojiElement.dataset.emoji = emoji;
+            
+            // Apply current emoji size settings
+            const baseFontSize = 24; // Base font size in pixels
+            emojiElement.style.fontSize = `${baseFontSize * fontSizeFactor}px`;
+            
+            // Scale the entire element
+            emojiElement.style.width = `${40 * itemSizeFactor}px`;
+            emojiElement.style.height = `${40 * itemSizeFactor}px`;
+            emojiElement.style.padding = `${5 * itemSizeFactor}px`;
+            emojiElement.style.borderRadius = `${8 * itemSizeFactor}px`;
             
             // Use mouseup instead of click to better control when emojis are selected
             emojiElement.addEventListener('mousedown', (e) => {
@@ -1851,30 +1890,49 @@ function hideSettingsModal() {
 
 // Update emoji size based on settings
 function updateEmojiSize(size) {
-    // Scale factor for emoji sizes
-    let scaleFactor = 1;
+    // Get emoji size scale factors (more dramatic differences)
+    let fontSizeFactor = 1;
+    let itemSizeFactor = 1;
+    let gridColumns = 6; // Default columns
     
     switch (size) {
         case 'small':
-            scaleFactor = 0.8;
+            fontSizeFactor = 1; // This is now our baseline size
+            itemSizeFactor = 1;
+            gridColumns = 7; // More columns for small size
             break;
         case 'medium':
-            scaleFactor = 1;
+            fontSizeFactor = 1.5;
+            itemSizeFactor = 1.3;
+            gridColumns = 5; // Medium columns
             break;
         case 'large':
-            scaleFactor = 1.2;
+            fontSizeFactor = 2;
+            itemSizeFactor = 1.8;
+            gridColumns = 3; // Fewer columns for large size
             break;
-    }
-    
-    // Apply to target emoji
-    if (targetEmojiElement) {
-        targetEmojiElement.style.fontSize = `${164 * scaleFactor}px`;
     }
     
     // Apply to grid emojis
     const gridEmojis = document.querySelectorAll('.emoji');
     gridEmojis.forEach(emoji => {
-        emoji.style.fontSize = `${24 * scaleFactor}px`;
+        // Update font size
+        const baseFontSize = 24; // Base font size in pixels
+        emoji.style.fontSize = `${baseFontSize * fontSizeFactor}px`;
+        
+        // Scale the entire element
+        emoji.style.width = `${40 * itemSizeFactor}px`;
+        emoji.style.height = `${40 * itemSizeFactor}px`;
+        emoji.style.padding = `${5 * itemSizeFactor}px`;
+        emoji.style.borderRadius = `${8 * itemSizeFactor}px`;
+    });
+    
+    // Update container grid layout
+    const emojiContainers = document.querySelectorAll('.emoji-category-container');
+    emojiContainers.forEach(container => {
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = `repeat(${gridColumns}, 1fr)`;
+        container.style.gap = `${8 * itemSizeFactor}px`;
     });
     
     // Save setting to storage for persistence
