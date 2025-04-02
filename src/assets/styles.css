@@ -807,8 +807,7 @@ body {
     }
     
     body {
-        padding: 10px;
-        /* Remove height constraints that prevented scrolling */
+        padding: 0; /* Remove body padding */
         overflow-y: auto;
     }
 
@@ -827,20 +826,18 @@ body {
     }
 
     .game-container {
-        margin-top: 60px;
+        margin: 60px 0 0 0; /* Remove left/right/bottom margins, keep top for header */
         width: 100%;
         max-width: 100%;
-        /* Remove fixed height constraints */
     }
 
     .game-card {
         min-width: auto;
         width: 100%;
         max-width: 100%;
-        padding: 15px;
-        border-radius: 16px;
+        padding: 15px 0;
+        border-radius: 0; /* Remove rounded edges */
         gap: 12px;
-        /* Remove height constraints to allow normal flow */
         overflow: visible;
     }
 
@@ -859,11 +856,24 @@ body {
     }
 
     /* Fix the emoji grid to be a specific height instead of filling screen */
+    .emoji-selector-container {
+        margin: 0;
+        width: 100%;
+        gap: 8px;
+    }
+
     .emoji-grid {
-        height: 300px; /* Fixed height that allows scrolling */
-        min-height: auto; /* Remove min-height constraint */
-        flex: none; /* Don't expand to fill space */
-        overflow-y: auto; /* Keep scrolling */
+        height: 300px;
+        min-height: auto;
+        flex: none;
+        overflow-y: auto;
+        padding: 15px 15px; /* Internal padding to align content with timer */
+        border-radius: 0; /* Ensure no rounded corners */
+    }
+
+    .category-tabs {
+        padding: 0 15px 5px 15px; /* Internal padding to align with timer */
+        margin: 0; /* Reset any margins */
     }
 
     /* Keep rest of styling */
@@ -880,7 +890,7 @@ body {
     }
 
     .category-tabs {
-        padding: 0 15px 5px 15px;
+        padding: 0 15px 5px 15px; /* Match horizontal padding with emoji grid */
     }
 
     .category-tab {
@@ -891,10 +901,13 @@ body {
 
     .timer-container {
         margin-bottom: 5px;
+        margin-left: 15px;
+        margin-right: 15px;
+        width: auto;
     }
 
     #timer-bar {
-        height: 1.5rem;
+        height: 2rem; /* Increased height from 1.5rem */
     }
 
     .modal-content {
