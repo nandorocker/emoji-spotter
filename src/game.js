@@ -2,6 +2,7 @@
 import emojiList from './appleEmojis.js';
 import { levelConfig } from './config/levelConfig.js';
 import { audioElements, playSound, applyAudioSettings, initializeAudio, preloadAudio } from './audio.js';
+import { DEFAULT_VOLUME, DEFAULT_MUTED } from './config/audioConfig.js';
 
 // Game variables
 let score = 0;
@@ -24,8 +25,8 @@ let isPaused = false; // Track if game is paused
 
 // Game settings
 let gameSettings = {
-    soundVolume: 50, // Volume level 0-100
-    isMuted: false, // Mute toggle
+    soundVolume: DEFAULT_VOLUME, // Volume level from config
+    isMuted: DEFAULT_MUTED, // Mute toggle from config
     emojiSize: 'small', // small, medium, large - small is default now
 };
 

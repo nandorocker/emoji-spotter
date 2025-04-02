@@ -7,6 +7,7 @@ import levelCompleteSound from './assets/audio/level_complete.mp3';
 import pauseSound from './assets/audio/pause.mp3';
 import countdownStartSound from './assets/audio/countdown_start.mp3';
 import countdownLastSound from './assets/audio/countdown_last.mp3';
+import { DEFAULT_VOLUME, DEFAULT_MUTED } from './config/audioConfig.js';
 
 // Create and export audio elements
 export const audioElements = {
@@ -21,7 +22,7 @@ export const audioElements = {
 };
 
 // Initialize audio with default settings
-export function initializeAudio(volume = 70, isMuted = false) {
+export function initializeAudio(volume = DEFAULT_VOLUME, isMuted = DEFAULT_MUTED) {
   Object.values(audioElements).forEach(audio => {
     audio.volume = volume / 100;
     audio.muted = isMuted;
