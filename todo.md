@@ -98,9 +98,9 @@
 - [x] Create simple popup window, same style as the initial instructions
   - Title: Settings
   - Close button: Top right
-- [ ] Add the settings, one at a time:
+- [x] Add the settings, one at a time:
   - [x] Sound volume: *slider* / mute on/off *toggle*
-  - [ ] Accessibility: emoji size (small/medium/large) *choice chip*
+  - [x] Accessibility: emoji size (small/medium/large) *choice chip*
     - Small: 6 columns
     - Medium: 5 columns
     - Large: 4 columns
@@ -109,8 +109,11 @@
 
 ---
 
-## Sound Effects
-- [ ] Add SFX and music
+## Implement Sound Effects
+- [x] Add SFX and music
+- [ ] Add credits
+- [ ] Add missing SFX
+  - [ ] Countdown (mario kart inspired)
 
 ---
 
