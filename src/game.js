@@ -1,14 +1,7 @@
 // Import the emoji list from the module
 import emojiList from './appleEmojis.js';
 import { levelConfig } from './config/levelConfig.js';
-
-// Audio file imports
-import bonusSound from '/audio/bonus.mp3';
-import correctSound from '/audio/correct.mp3';
-import gameOverSound from '/audio/game_over.mp3';
-import incorrectSound from '/audio/incorrect.mp3';
-import levelCompleteSound from '/audio/level_complete.mp3';
-import pauseSound from '/audio/pause.mp3';
+import { audioElements, playSound, applyAudioSettings, initializeAudio, preloadAudio } from './audio.js';
 
 // Game variables
 let score = 0;
@@ -87,22 +80,6 @@ const preloader = document.getElementById('preloader');
 
 // Set initial display states
 if (countdownOverlay) countdownOverlay.style.display = 'none';
-
-// Audio elements
-const audioElements = {
-    bonus: new Audio(bonusSound),
-    correct: new Audio(correctSound),
-    gameOver: new Audio(gameOverSound),
-    incorrect: new Audio(incorrectSound),
-    levelComplete: new Audio(levelCompleteSound),
-    pause: new Audio(pauseSound)
-  };
-  
-  // Apply initial volume settings
-  Object.values(audioElements).forEach(audio => {
-    audio.volume = gameSettings.soundVolume / 100;
-    audio.muted = gameSettings.isMuted;
-  });
 
 // Initialize particles - with error handling
 function initParticles() {
@@ -518,7 +495,7 @@ function handleEmojiClick(emoji, emojiElement) {
         // Calculate score with bonuses
         const pointsEarned = calculateScore(category);
 
-        audioElements.correct.play().catch(error => console.error('Error playing correct sound:', error));
+        playSound('correct');
         
         // Update counters
         score += pointsEarned;
@@ -554,7 +531,7 @@ function handleEmojiClick(emoji, emojiElement) {
         // Wrong emoji, track this attempt
         incorrectAttempts++;
 
-        audioElements.incorrect.play().catch(error => console.error('Error playing incorrect sound:', error));
+        playSound('incorrect');
         
         // Apply time penalty (2 seconds)
         timeLeft = Math.max(1, timeLeft - 2);
@@ -731,7 +708,7 @@ function advanceToNextLevel() {
     // Show level complete message
     showLevelCompleteMessage();
 
-    audioElements.levelComplete.play().catch(error => console.error('Error playing level complete sound:', error));
+    playSound('levelComplete');
     
     // Wait a moment before showing the countdown
     setTimeout(() => {
@@ -1106,7 +1083,8 @@ function showMessage(message, color) {
 function endGame() {
     if (gameTimer) clearInterval(gameTimer);
     isGameOver = true;
-    audioElements.gameOver.play().catch(error => console.error('Error playing game over sound:', error));
+    
+    playSound('gameOver');
     
     // Create funny assessment based on score
     let assessment = '';
@@ -1286,21 +1264,12 @@ function loadGameSettings() {
             }
             
             // Apply loaded audio settings
-if (parsedSettings.soundVolume !== undefined) {
-    gameSettings.soundVolume = parsedSettings.soundVolume;
-    Object.values(audioElements).forEach(audio => {
-      audio.volume = gameSettings.soundVolume / 100;
-    });
-  }
-  if (parsedSettings.isMuted !== undefined) {
-    gameSettings.isMuted = parsedSettings.isMuted;
-    Object.values(audioElements).forEach(audio => {
-      audio.muted = gameSettings.isMuted;
-    });
-  }
+            applyAudioSettings(gameSettings.soundVolume, gameSettings.isMuted);
         }
     } catch (e) {
         console.error('Failed to load settings from localStorage', e);
+        // Ensure default settings are applied if loading fails
+        applyAudioSettings(gameSettings.soundVolume, gameSettings.isMuted);
     }
 }
 
@@ -1362,10 +1331,7 @@ window.addEventListener('load', () => {
             initParticles();
 
             // Preload audio to reduce latency
-Object.values(audioElements).forEach(audio => {
-    audio.preload = 'auto';
-    audio.load();
-  });
+            preloadAudio();
             
             // Show tutorial or start game
             showTutorial();
@@ -1668,8 +1634,8 @@ function calculateScore(category) {
     const totalPoints = Math.round(basePoints * speedMultiplier * accuracyMultiplier * categoryMultiplier);
 
     if (speedMultiplier >= 1.5) {
-        audioElements.bonus.play().catch(error => console.error('Error playing bonus sound:', error));
-      }
+        playSound('bonus');
+    }
     
     // For debugging
     if (debugMode) {
@@ -1687,7 +1653,7 @@ function togglePause() {
     
     if (isPaused) {
         // Pause the game
-        audioElements.pause.play().catch(error => console.error('Error playing pause sound:', error));
+        playSound('pause');
 
         if (gameTimer) {
             clearInterval(gameTimer);
@@ -1786,7 +1752,7 @@ function showSettingsModal() {
     volumeSlider.type = 'range';
     volumeSlider.min = '0';
     volumeSlider.max = '100';
-    volumeSlider.value = gameSettings.soundVolume;
+    volumeSlider.value = gameSettings.soundVolume; // Use current gameSettings value
     volumeSlider.disabled = gameSettings.isMuted;
     volumeSlider.style.flex = '1';
     volumeSlider.style.marginRight = '10px';
@@ -1804,7 +1770,7 @@ function showSettingsModal() {
     
     const muteToggle = document.createElement('input');
     muteToggle.type = 'checkbox';
-    muteToggle.checked = gameSettings.isMuted;
+    muteToggle.checked = gameSettings.isMuted; // Use current gameSettings value
     muteToggle.style.cursor = 'pointer';
     muteToggle.style.width = '16px';
     muteToggle.style.height = '16px';
@@ -1897,11 +1863,9 @@ function showSettingsModal() {
     
     // Fix volume slider functionality to immediately apply changes
     volumeSlider.oninput = function() {
-        gameSettings.soundVolume = this.value;
+        gameSettings.soundVolume = parseInt(this.value);
         // Apply volume changes to game sounds immediately
-        Object.values(audioElements).forEach(audio => {
-            audio.volume = gameSettings.soundVolume / 100;
-        });
+        applyAudioSettings(gameSettings.soundVolume, gameSettings.isMuted);
         // Save settings
         saveGameSettings();
     };
@@ -1911,9 +1875,7 @@ function showSettingsModal() {
         gameSettings.isMuted = this.checked;
         volumeSlider.disabled = this.checked;
         // Apply mute settings to game sounds immediately
-        Object.values(audioElements).forEach(audio => {
-            audio.muted = gameSettings.isMuted;
-        });
+        applyAudioSettings(gameSettings.soundVolume, gameSettings.isMuted);
         // Save settings
         saveGameSettings();
     };
@@ -2008,15 +1970,7 @@ function updateEmojiSize(size) {
     });
     
     // Save setting to storage for persistence
-    try {
-        localStorage.setItem('emojiSpotterSettings', JSON.stringify(gameSettings));
-        // Apply volume changes
-Object.values(audioElements).forEach(audio => {
-    audio.volume = gameSettings.soundVolume / 100;
-  });
-    } catch (e) {
-        console.error('Failed to save settings to localStorage', e);
-    }
+    saveGameSettings();
 }
 
 // Load settings from localStorage
