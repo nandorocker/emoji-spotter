@@ -1577,13 +1577,17 @@ function stopDrag(e) {
         momentum();
     }
     
-    // Only prevent default emoji click if we actually moved
-    if (moveDetected && e && e.type !== 'touchend') {
-        e.preventDefault();
+    // If we've detected movement, cancel click events
+    if (moveDetected) {
+        if (e && e.type !== 'touchend') {
+            e.preventDefault();
+        }
         
-        // Temporary disable emoji clicks to avoid accidental selections
+        // Disable all emoji click events temporarily to prevent accidental selection after drag
         const emojis = emojiGridElement.querySelectorAll('.emoji');
         emojis.forEach(emoji => {
+            // Remove click start data and temporarily disable pointer events
+            delete emoji.dataset.clickStart;
             emoji.style.pointerEvents = 'none';
         });
         
@@ -1592,7 +1596,7 @@ function stopDrag(e) {
             emojis.forEach(emoji => {
                 emoji.style.pointerEvents = 'auto';
             });
-        }, 100);
+        }, 300); // Longer delay to ensure no accidental taps
     }
     
     isDragging = false;
