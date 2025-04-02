@@ -9,7 +9,7 @@
 ## Mobile
 
 - [ ] Make game responsive
-- [ ] Optimize on mobile screens
+- [x] Optimize on mobile screens
 
 ---
 
@@ -17,33 +17,84 @@
 - [ ] Make it so I can click and drag the emoji list up and down
 
 ## Gameplay
-### Level System
+### UI Improvements
 
-## To-Do: Implement Level System
+#### Hints System
 
-### Phase 1: Core Logic
-- [ ] Load level config (matches, time, categories).
-- [ ] Start timer and match tracking per level.
-- [ ] On success, trigger next level.
-- [ ] On timeout, trigger Game Over.
+- [ ] Make the target emoji's tab appear only after a few seconds (2s)
+- [ ] After 5s, make the emoji background pulsate and glow a little and flash VERY mildly
 
-### Phase 2: Transition Display
-- [ ] Reuse existing countdown UI between levels.
-- [ ] Add:
+#### Overlay system
+
+- [ ] If there's already a message, and another one appears, those are overlapping
+- [ ] Make it so they stack, and the new message "bumps" the previous ones up (so the origin point is always the same)
+
+
+
+#### Implement Sound Effects
+
+- [x] Add SFX and music
+- [ ] Add credits
+- [ ] Add missing SFX
+  - [ ] Countdown (mario kart inspired)
+
+---
+
+### Start Screen
+
+- [ ] Make a proper "start screen"
+
+---
+
+### Practice Mode
+
+- [ ] Create a "Practice Mode"
+  - [ ] No Timer
+  - [ ] Dropdown to select which categories are enabled/disabled (leftmost category tab)
+  - [ ] By default, show only the "Smileys" category
+- [ ] Add "Practice Mode" button to start screen
+
+---
+
+### Technical
+
+- [ ] Minify CSS and whatever else
+
+- [ ] When counting down, either have the tiles in already, or hide everything (including main window)
+
+  
+
+---
+
+
+
+## Done
+
+### To-Do: Implement Level System
+
+#### Phase 1: Core Logic
+- [x] Load level config (matches, time, categories).
+- [x] Start timer and match tracking per level.
+- [x] On success, trigger next level.
+- [x] On timeout, trigger Game Over.
+
+#### Phase 2: Transition Display
+- [x] Reuse existing countdown UI between levels.
+- [x] Add:
   - Next level match goal
   - New category (if any)
 
-### Phase 3: Category Unlock Logic
-- [ ] Unlock categories per config order (Smileys → Flags).
-- [ ] Pull active categories dynamically from config.
+#### Phase 3: Category Unlock Logic
+- [x] Unlock categories per config order (Smileys → Flags).
+- [x] Pull active categories dynamically from config.
 
-### Phase 4: Config + Debug
-- [ ] Make all level parameters editable via config.
-- [ ] Add basic logging/debug info for current level state.
+#### Phase 4: Config + Debug
+- [x] Make all level parameters editable via config.
+- [x] Add basic logging/debug info for current level state.
 
-### Optional Polish
-- [ ] Show new category icon/name in transition UI.
-- [ ] Add hooks for tuning or analytics later.
+#### Optional Polish
+- [x] Show new category icon/name in transition UI.
+- [x] Add hooks for tuning or analytics later.
 
 ---
 
@@ -60,38 +111,28 @@
 - [x] Store delta in state for bonus calculation.
 
 ### Phase 3: Accuracy Tracking
-- [ ] Track number of incorrect taps per emoji prompt.
-- [ ] Reset error count at start of each prompt.
+- [x] Track number of incorrect taps per emoji prompt.
+- [x] Reset error count at start of each prompt.
 
 ### Phase 4: Bonus Calculation
-- [ ] Implement bonus logic using speed delta and mistake count.
-- [ ] Add category-based bonus mapping (config-driven).
-- [ ] Add confusable emoji bonus logic (requires static emoji group config).
+- [x] Implement bonus logic using speed delta and mistake count.
+- [x] Add category-based bonus mapping (config-driven).
+- [x] Add confusable emoji bonus logic (requires static emoji group config).
 
 ### Phase 5: Score Update Logic
-- [ ] Combine base + bonus into total for each correct emoji.
-- [ ] Update global score accordingly.
-- [ ] Log or store breakdown (for debugging/analytics).
+- [x] Combine base + bonus into total for each correct emoji.
+- [x] Update global score accordingly.
+- [x] Log or store breakdown (for debugging/analytics).
 
 ### Phase 6: Time Penalty
-- [ ] On incorrect tap, subtract time from level timer.
-- [ ] Use existing timer mutation (no direct timer manipulation).
+- [x] On incorrect tap, subtract time from level timer.
+- [x] Use existing timer mutation (no direct timer manipulation).
 
 ### Phase 7: Debug / UI Hook-up
-- [ ] Expose live score for HUD.
-- [ ] (Optional) Add a debug log or floating breakdown panel for testing.
+- [x] Expose live score for HUD.
+- [x] (Optional) Add a debug log or floating breakdown panel for testing.
 
----
 
-## UI Improvements
-
-### Hints System
-- [ ] Make the target emoji's tab appear only after a few seconds (2s)
-- [ ] After 5s, make the emoji background pulsate and glow a little and flash VERY mildly
-
-### Overlay system
-- [ ] If there's already a message, and another one appears, those are overlapping
-- [ ] Make it so they stack, and the new message "bumps" the previous ones up (so the origin point is always the same)
 
 ### Settings
 - [x] Replaces the "pause" screen and shortcut
@@ -106,34 +147,6 @@
     - Large: 4 columns
     - Tiles always should be sized so they fill the horizontal space available (with proper margins); vertical size must keep the same (or proportional) padding on all sizes
   - [x] Very small credits at the bottom of window
-
----
-
-## Implement Sound Effects
-- [x] Add SFX and music
-- [ ] Add credits
-- [ ] Add missing SFX
-  - [ ] Countdown (mario kart inspired)
-
----
-
-## Start Screen
-- [ ] Make a proper "start screen"
-
----
-
-## Practice Mode
-- [ ] Create a "Practice Mode"
-  - [ ] No Timer
-  - [ ] Dropdown to select which categories are enabled/disabled (leftmost category tab)
-  - [ ] By default, show only the "Smileys" category
-- [ ] Add "Practice Mode" button to start screen
-
----
-
-## Technical
-- [ ] Minify CSS and whatever else
-- [ ] When counting down, either have the tiles in already, or hide everything (including main window)
 
 ---
 
