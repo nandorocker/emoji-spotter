@@ -780,3 +780,182 @@ body {
     -ms-user-select: none;      /* Internet Explorer/Edge */
     cursor: arrow;
 }
+
+@media (orientation: landscape) and (max-height: 600px) {
+    body::before {
+        content: "Please rotate your device to portrait mode for the best experience";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--background-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        z-index: 9999;
+        padding: 20px;
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+    
+    body {
+        padding: 10px;
+        /* Remove height constraints that prevented scrolling */
+        overflow-y: auto;
+    }
+
+    .game-header {
+        height: 50px;
+        padding: 0 10px;
+    }
+
+    .game-logo {
+        font-size: 18px;
+    }
+
+    .score-level-display {
+        font-size: 14px;
+        padding: 4px 8px;
+    }
+
+    .game-container {
+        margin-top: 60px;
+        width: 100%;
+        max-width: 100%;
+        /* Remove fixed height constraints */
+    }
+
+    .game-card {
+        min-width: auto;
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+        border-radius: 16px;
+        gap: 12px;
+        /* Remove height constraints to allow normal flow */
+        overflow: visible;
+    }
+
+    .emoji-box {
+        width: 120px;
+        height: 120px;
+    }
+
+    #target-emoji {
+        font-size: 80px;
+    }
+
+    .find-emoji-title-inside {
+        font-size: 14px;
+        margin: 0 0 5px 0;
+    }
+
+    /* Fix the emoji grid to be a specific height instead of filling screen */
+    .emoji-grid {
+        height: 300px; /* Fixed height that allows scrolling */
+        min-height: auto; /* Remove min-height constraint */
+        flex: none; /* Don't expand to fill space */
+        overflow-y: auto; /* Keep scrolling */
+    }
+
+    /* Keep rest of styling */
+    .emoji-category-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .emoji {
+        font-size: 20px;
+        min-height: 36px;
+        border-radius: 8px;
+    }
+
+    .category-tabs {
+        padding: 0 15px 5px 15px;
+    }
+
+    .category-tab {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 18px;
+    }
+
+    .timer-container {
+        margin-bottom: 5px;
+    }
+
+    #timer-bar {
+        height: 1.5rem;
+    }
+
+    .modal-content {
+        padding: 25px 15px;
+        width: 95%;
+    }
+
+    #modal-title {
+        font-size: 24px;
+    }
+
+    #final-score-display {
+        font-size: 48px;
+    }
+
+    .stats-container {
+        margin: 15px 0;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    .stat-label {
+        font-size: 10px;
+    }
+
+    #restart-button, #share-button, #start-game-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        margin: 5px 4px;
+    }
+
+    .countdown {
+        font-size: 80px;
+    }
+
+    .tutorial-step {
+        margin: 15px 0;
+        padding: 10px;
+    }
+
+    .tutorial-emoji {
+        font-size: 30px;
+        margin-right: 10px;
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 380px) {
+    .emoji-category-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    #target-emoji {
+        font-size: 70px;
+    }
+    
+    .emoji-box {
+        width: 100px;
+        height: 100px;
+    }
+}

@@ -433,7 +433,7 @@ function generateEmojiGrid(activeCategory = null) {
             emojiElement.style.padding = `${5 * itemSizeFactor}px`;
             emojiElement.style.borderRadius = `${8 * itemSizeFactor}px`;
             
-            // Use mouseup instead of click to better control when emojis are selected
+            // Handle desktop mouse events
             emojiElement.addEventListener('mousedown', (e) => {
                 // Mark this element as potentially receiving a click
                 emojiElement.dataset.clickStart = 'true';
@@ -447,16 +447,24 @@ function generateEmojiGrid(activeCategory = null) {
                 delete emojiElement.dataset.clickStart;
             });
             
-            // For touch devices
+            // For touch devices - separate tracking variable to prevent conflicts
+            let touchStarted = false;
+            
             emojiElement.addEventListener('touchstart', (e) => {
-                emojiElement.dataset.clickStart = 'true';
+                touchStarted = true;
+                moveDetected = false; // Reset move detection for new touch
+            });
+            
+            emojiElement.addEventListener('touchmove', () => {
+                moveDetected = true; // Mark as moved if touchmove triggers
             });
             
             emojiElement.addEventListener('touchend', (e) => {
-                if (emojiElement.dataset.clickStart === 'true' && !moveDetected) {
+                if (touchStarted && !moveDetected) {
                     handleEmojiClick(emoji, emojiElement);
+                    e.preventDefault(); // Prevent additional mouseup/click events
                 }
-                delete emojiElement.dataset.clickStart;
+                touchStarted = false;
             });
             
             emojiContainer.appendChild(emojiElement);
