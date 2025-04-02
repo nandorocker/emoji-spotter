@@ -202,14 +202,32 @@ function startCountdown() {
     let count = 3;
     countdownElement.textContent = count;
     
+    // Play the first countdown sound (for 3)
+    playSound('countdownStart');
+    
     const countInterval = setInterval(() => {
         count--;
-        if (count <= 0) {
+        
+        // Update the display
+        countdownElement.textContent = count;
+        
+        if (count === 2 || count === 1) {
+            // Play countdown sound on 2 and 1
+            playSound('countdownStart');
+        } else if (count === 0) {
+            // Play the final "GO!" sound
+            playSound('countdownLast');
+            
+            // Show "GO!" text briefly before starting the game
+            countdownElement.textContent = "GO!";
+            
+            // Wait a moment for the GO text to be visible, then start game
+            setTimeout(() => {
+                countdownOverlay.style.display = 'none';
+                initGame();
+            }, 500);
+            
             clearInterval(countInterval);
-            countdownOverlay.style.display = 'none';
-            initGame();
-        } else {
-            countdownElement.textContent = count;
         }
     }, 1000);
 }
@@ -952,16 +970,32 @@ function showLevelTransition() {
         // Show countdown
         countdownWrapper.style.opacity = '1';
         
+        // Play the first countdown sound for "3"
+        playSound('countdownStart');
+        
         // Start countdown
         let count = 3;
         const countInterval = setInterval(() => {
             count--;
-            if (count <= 0) {
+            countdownWrapper.textContent = count;
+            
+            if (count === 2 || count === 1) {
+                // Play countdown sound on 2 and 1
+                playSound('countdownStart');
+            } else if (count === 0) {
+                // Play the final "GO!" sound
+                playSound('countdownLast');
+                
+                // Show "GO!" text briefly before starting the next level
+                countdownWrapper.textContent = "GO!";
+                
+                // Wait a moment for the GO text to be visible, then start the next level
+                setTimeout(() => {
+                    countdownOverlay.style.display = 'none';
+                    startNextLevel();
+                }, 500);
+                
                 clearInterval(countInterval);
-                countdownOverlay.style.display = 'none';
-                startNextLevel();
-            } else {
-                countdownWrapper.textContent = count;
             }
         }, 1000);
     }, 2000);

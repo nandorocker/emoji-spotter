@@ -5,6 +5,8 @@ import gameOverSound from '/audio/game_over.mp3';
 import incorrectSound from '/audio/incorrect.mp3';
 import levelCompleteSound from '/audio/level_complete.mp3';
 import pauseSound from '/audio/pause.mp3';
+import countdownStartSound from '/audio/countdown_start.mp3';
+import countdownLastSound from '/audio/countdown_last.mp3';
 
 // Create and export audio elements
 export const audioElements = {
@@ -13,7 +15,9 @@ export const audioElements = {
   gameOver: new Audio(gameOverSound),
   incorrect: new Audio(incorrectSound),
   levelComplete: new Audio(levelCompleteSound),
-  pause: new Audio(pauseSound)
+  pause: new Audio(pauseSound),
+  countdownStart: new Audio(countdownStartSound),
+  countdownLast: new Audio(countdownLastSound)
 };
 
 // Initialize audio with default settings
@@ -35,6 +39,12 @@ export function playSound(soundName) {
       console.error(`Sound "${soundName}" not found`);
       return;
     }
+    
+    // For countdown sounds, reset the audio to start position first to ensure proper playback
+    if (soundName === 'countdownStart' || soundName === 'countdownLast') {
+      audioElements[soundName].currentTime = 0;
+    }
+    
     return audioElements[soundName].play().catch(error => {
       console.error(`Error playing ${soundName} sound:`, error);
     });
