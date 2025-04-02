@@ -29,14 +29,14 @@
 - [ ] If there's already a message, and another one appears, those are overlapping
 - [ ] Make it so they stack, and the new message "bumps" the previous ones up (so the origin point is always the same)
 
-
-
 #### Implement Sound Effects
 
 - [x] Add SFX and music
 - [ ] Add credits
-- [ ] Add missing SFX
-  - [ ] Countdown (mario kart inspired)
+- [x] Add missing SFX
+  - [x] Countdown (mario kart inspired)
+- [ ] Add mute button directly on header
+- [ ] Lower default volume
 
 ---
 
