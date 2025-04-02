@@ -799,6 +799,7 @@ function showLevelCompleteMessage() {
         text.style.fontWeight = 'bold';
         text.style.marginBottom = '20px';
         text.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
+        text.style.textAlign = 'center'; // Ensure text is center-aligned on all devices
         
         // Create stars animation
         const stars = document.createElement('div');
@@ -806,6 +807,8 @@ function showLevelCompleteMessage() {
         stars.style.fontSize = '64px';
         stars.style.letterSpacing = '20px';
         stars.style.animation = 'starPulse 1s infinite alternate';
+        stars.style.textAlign = 'center'; // Center the stars
+        stars.style.width = '100%'; // Give full width to ensure centering works
         
         // Add star pulse animation
         const styleSheet = document.createElement('style');
