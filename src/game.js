@@ -1022,10 +1022,13 @@ function setNewTargetEmoji() {
         tab.style.border = '2px solid transparent';
     });
     
-    // Add orange border hint to the category
-    if (targetCategory) {
-        targetCategory.style.border = '2px solid #ff9500';
-    }
+    // Delay the category hint by 2.5 seconds
+    setTimeout(() => {
+        // Add orange border hint to the category
+        if (targetCategory) {
+            targetCategory.style.border = '2px solid #ff9500';
+        }
+    }, 3500);
     
     // Reset scoring variables for the new target
     targetRevealTime = Date.now();
