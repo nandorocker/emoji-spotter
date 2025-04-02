@@ -50,14 +50,14 @@
 ## To-Do: Implement Scoring System
 
 ### Phase 1: Basic Scoring Framework
-- [ ] Create `useScoreStore` or integrate scoring into existing game state store.
-- [ ] Add function to award base points on correct emoji match.
-- [ ] Add persistent `score` state across levels.
+- [x] Create `useScoreStore` or integrate scoring into existing game state store.
+- [x] Add function to award base points on correct emoji match.
+- [x] Add persistent `score` state across levels.
 
 ### Phase 2: Speed Tracking
-- [ ] Start timer when target emoji is revealed.
-- [ ] Capture time delta on correct match.
-- [ ] Store delta in state for bonus calculation.
+- [x] Start timer when target emoji is revealed.
+- [x] Capture time delta on correct match.
+- [x] Store delta in state for bonus calculation.
 
 ### Phase 3: Accuracy Tracking
 - [ ] Track number of incorrect taps per emoji prompt.
@@ -137,3 +137,7 @@
   - Level 5-8: smileys + people
   etc.
 - To avoid confusion, always enable only sequencial ones (1, then 2, then 3, then 1+2+3, etc; never 2+5+8 for example)
+
+## Score updates
+- Different bonuses for finishing the level faster
+- Add some cool messages ("combo!" "nice one!" etc.) depending on what you do. could tie it to the bonuses.

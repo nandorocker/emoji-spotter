@@ -1919,14 +1919,13 @@ function updateEmojiSize(size) {
         const baseFontSize = 24; // Base font size in pixels
         emoji.style.fontSize = `${baseFontSize * fontSizeFactor}px`;
         
-        // Remove explicit width/height to let CSS handle the full width
-        // and maintain aspect ratio for proper spacing
+        // Apply consistent height with proportional padding
+        emoji.style.height = `${40 * itemSizeFactor}px`;
         emoji.style.padding = `${5 * itemSizeFactor}px`;
         emoji.style.borderRadius = `${8 * itemSizeFactor}px`;
         
-        // Remove width/height inline styles that might be present
+        // Remove width if it exists as an inline style, letting CSS control width
         emoji.style.removeProperty('width');
-        emoji.style.removeProperty('height');
     });
     
     // Update container grid layout
