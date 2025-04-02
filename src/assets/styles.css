@@ -534,7 +534,10 @@ body {
     letter-spacing: 1px;
 }
 
-#restart-button, #share-button, #start-game-button {
+/* Common button style for all modals using classes for reusability */
+.modal-button, 
+.restart-button, .share-button, .start-game-button,
+.settings-button {
     background: linear-gradient(90deg, var(--primary-color), #7691ff);
     color: white;
     border: none;
@@ -548,23 +551,28 @@ body {
     margin: 5px 4px;
 }
 
-#restart-button:hover, #share-button:hover, #start-game-button:hover {
+.modal-button:hover, 
+.restart-button:hover, .share-button:hover, .start-game-button:hover,
+.settings-button:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(82, 113, 255, 0.4);
 }
 
-#restart-button:active, #share-button:active, #start-game-button:active {
+.modal-button:active, 
+.restart-button:active, .share-button:active, .start-game-button:active,
+.settings-button:active {
     transform: translateY(0);
     box-shadow: 0 4px 10px rgba(82, 113, 255, 0.3);
 }
 
-#share-button {
+/* Special styling for share and secondary buttons */
+.modal-button.secondary, .share-button {
     background: linear-gradient(90deg, var(--accent-color), #ffcf8b);
     color: #333;
     box-shadow: 0 4px 15px rgba(255, 189, 89, 0.3);
 }
 
-#share-button:hover {
+.modal-button.secondary:hover, .share-button:hover {
     box-shadow: 0 8px 20px rgba(255, 189, 89, 0.4);
 }
 

@@ -1813,8 +1813,6 @@ function showSettingsModal() {
     settingsContent.style.maxWidth = '450px';
     settingsContent.style.position = 'relative';
     
-    settingsContent.style.position = 'relative';
-    
     // Settings title
     const title = document.createElement('h2');
     title.textContent = 'Settings';
@@ -1824,7 +1822,7 @@ function showSettingsModal() {
     title.style.textAlign = 'center';
     title.style.color = 'var(--primary-color)';
     
-    // Close button
+    // Close button - styled like our modal buttons but as a circle
     const closeButton = document.createElement('button');
     closeButton.innerHTML = '&times;';
     closeButton.style.position = 'absolute';
@@ -1923,15 +1921,19 @@ function showSettingsModal() {
     sizes.forEach(size => {
         const sizeButton = document.createElement('button');
         sizeButton.textContent = size.label;
+        sizeButton.className = 'modal-button';
         sizeButton.style.flex = '1';
-        sizeButton.style.padding = '10px';
-        sizeButton.style.border = '2px solid #ddd';
-        sizeButton.style.borderRadius = '10px';
-        sizeButton.style.background = gameSettings.emojiSize === size.value ? 'var(--primary-color)' : 'white';
-        sizeButton.style.color = gameSettings.emojiSize === size.value ? 'white' : '#333';
-        sizeButton.style.fontWeight = 'bold';
-        sizeButton.style.cursor = 'pointer';
-        sizeButton.style.transition = 'all 0.2s';
+        sizeButton.style.padding = '10px 15px';
+        
+        // Add active styling for currently selected size
+        if (gameSettings.emojiSize === size.value) {
+            sizeButton.style.background = 'linear-gradient(90deg, var(--primary-color), #7691ff)';
+            sizeButton.style.color = 'white';
+        } else {
+            sizeButton.style.background = 'white';
+            sizeButton.style.color = '#333';
+            sizeButton.style.border = '2px solid #ddd';
+        }
         
         sizeButton.onclick = function() {
             gameSettings.emojiSize = size.value;
@@ -1942,11 +1944,13 @@ function showSettingsModal() {
             allSizeButtons.forEach(btn => {
                 btn.style.background = 'white';
                 btn.style.color = '#333';
+                btn.style.border = '2px solid #ddd';
             });
             
             // Highlight selected button
-            this.style.background = 'var(--primary-color)';
+            this.style.background = 'linear-gradient(90deg, var(--primary-color), #7691ff)';
             this.style.color = 'white';
+            this.style.border = 'none';
         };
         
         sizeButtonsContainer.appendChild(sizeButton);
