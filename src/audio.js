@@ -7,7 +7,7 @@ import levelCompleteSound from './assets/audio/level_complete.mp3';
 import pauseSound from './assets/audio/pause.mp3';
 import countdownStartSound from './assets/audio/countdown_start.mp3';
 import countdownLastSound from './assets/audio/countdown_last.mp3';
-import { DEFAULT_VOLUME, DEFAULT_MUTED } from './config/audioConfig.js';
+import { DEFAULT_VOLUME, DEFAULT_MUTED } from './config/gameConfig.js';
 
 // Create and export audio elements
 export const audioElements = {
