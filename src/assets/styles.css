@@ -972,3 +972,139 @@ body {
         height: 100px;
     }
 }
+
+/* Toast notification styles */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: white;
+    font-weight: 600;
+    animation: toast-slide-in 0.3s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.toast.success {
+    background: rgba(29, 185, 84, 0.6);
+    border-left: 4px solid #1db954;
+}
+
+.toast.error {
+    background: rgba(255, 59, 48, 0.6);
+    border-left: 4px solid #ff3b30;
+}
+
+.toast.warning {
+    background: rgba(255, 149, 0, 0.6);
+    border-left: 4px solid #ff9500;
+}
+
+.toast-icon {
+    margin-right: 12px;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 18px;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.7);
+    animation: toast-progress 2.5s linear forwards;
+}
+
+@keyframes toast-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toast-slide-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes toast-progress {
+    from { width: 100%; }
+    to { width: 0; }
+}
+
+/* Floating point indicators */
+.floating-indicator {
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 100;
+    text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(0);
+    transition: opacity 0.1s ease-in;
+    animation: float-up 1.5s ease-out forwards;
+    will-change: transform, opacity;
+}
+
+.floating-indicator.success {
+    color: #1db954;
+}
+
+.floating-indicator.error {
+    color: #ff3b30;
+}
+
+@keyframes float-up {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+}
