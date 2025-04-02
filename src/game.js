@@ -21,6 +21,13 @@ let matchesCompleted = 0;
 let availableCategories = [];
 let isPaused = false; // Track if game is paused
 
+// Game settings
+let gameSettings = {
+    soundVolume: 70, // Volume level 0-100
+    isMuted: false, // Mute toggle
+    emojiSize: 'medium', // small, medium, large
+};
+
 // Scoring system variables
 let targetRevealTime = 0;     // When the current target emoji was revealed
 let incorrectAttempts = 0;    // Number of incorrect attempts for current target emoji
@@ -1195,9 +1202,33 @@ function loadLevelConfig(currentLevel) {
     if (timerTextElement) timerTextElement.textContent = timeLeft;
 }
 
+// Load settings from localStorage
+function loadGameSettings() {
+    try {
+        const savedSettings = localStorage.getItem('emojiSpotterSettings');
+        if (savedSettings) {
+            const parsedSettings = JSON.parse(savedSettings);
+            // Update game settings with saved values
+            gameSettings = { ...gameSettings, ...parsedSettings };
+            
+            // Apply loaded settings
+            if (gameSettings.emojiSize) {
+                updateEmojiSize(gameSettings.emojiSize);
+            }
+            
+            // TODO: Apply sound settings when audio is implemented
+        }
+    } catch (e) {
+        console.error('Failed to load settings from localStorage', e);
+    }
+}
+
 // Initialize game on load with error handling
 window.addEventListener('load', () => {
     try {
+        // Load user settings
+        loadGameSettings();
+        
         // Show preloader while resources are loading
         if (preloader) {
             preloader.style.display = 'flex';
@@ -1561,57 +1592,298 @@ function togglePause() {
             gameTimer = null;
         }
         
-        // Show pause overlay
-        showPauseOverlay();
+        // Show settings modal instead of pause overlay
+        showSettingsModal();
     } else {
         // Resume the game
         startTimer();
         
-        // Hide pause overlay
-        hidePauseOverlay();
+        // Hide settings modal
+        hideSettingsModal();
     }
 }
 
-// Show pause overlay
-function showPauseOverlay() {
-    const pauseOverlay = document.createElement('div');
-    pauseOverlay.id = 'pause-overlay';
-    pauseOverlay.style.position = 'fixed';
-    pauseOverlay.style.top = '0';
-    pauseOverlay.style.left = '0';
-    pauseOverlay.style.width = '100%';
-    pauseOverlay.style.height = '100%';
-    pauseOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    pauseOverlay.style.display = 'flex';
-    pauseOverlay.style.flexDirection = 'column';
-    pauseOverlay.style.alignItems = 'center';
-    pauseOverlay.style.justifyContent = 'center';
-    pauseOverlay.style.zIndex = '500';
-    pauseOverlay.style.backdropFilter = 'blur(5px)';
+// Show settings modal
+function showSettingsModal() {
+    // Create settings modal container
+    const settingsModal = document.createElement('div');
+    settingsModal.id = 'settings-modal';
+    settingsModal.style.position = 'fixed';
+    settingsModal.style.top = '0';
+    settingsModal.style.left = '0';
+    settingsModal.style.width = '100%';
+    settingsModal.style.height = '100%';
+    settingsModal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    settingsModal.style.display = 'flex';
+    settingsModal.style.alignItems = 'center';
+    settingsModal.style.justifyContent = 'center';
+    settingsModal.style.zIndex = '500';
+    settingsModal.style.backdropFilter = 'blur(5px)';
     
-    // Pause text
-    const pauseText = document.createElement('div');
-    pauseText.textContent = 'PAUSED';
-    pauseText.style.color = '#fff';
-    pauseText.style.fontSize = '48px';
-    pauseText.style.fontWeight = 'bold';
-    pauseText.style.marginBottom = '20px';
+    // Create settings content
+    const settingsContent = document.createElement('div');
+    settingsContent.className = 'settings-content';
+    settingsContent.style.backgroundColor = 'white';
+    settingsContent.style.padding = '30px';
+    settingsContent.style.borderRadius = '20px';
+    settingsContent.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+    settingsContent.style.width = '90%';
+    settingsContent.style.maxWidth = '450px';
+    settingsContent.style.position = 'relative';
     
-    // Instructions
-    const instructions = document.createElement('div');
-    instructions.textContent = 'Press ESC to resume';
-    instructions.style.color = '#fff';
-    instructions.style.fontSize = '24px';
+    // Settings title
+    const title = document.createElement('h2');
+    title.textContent = 'Settings';
+    title.style.marginTop = '0';
+    title.style.marginBottom = '20px';
+    title.style.fontSize = '28px';
+    title.style.textAlign = 'center';
+    title.style.color = 'var(--primary-color)';
     
-    pauseOverlay.appendChild(pauseText);
-    pauseOverlay.appendChild(instructions);
-    document.body.appendChild(pauseOverlay);
+    // Close button
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '&times;';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '15px';
+    closeButton.style.right = '15px';
+    closeButton.style.background = 'none';
+    closeButton.style.border = 'none';
+    closeButton.style.fontSize = '24px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.style.color = '#999';
+    closeButton.style.width = '30px';
+    closeButton.style.height = '30px';
+    closeButton.style.borderRadius = '50%';
+    closeButton.style.display = 'flex';
+    closeButton.style.alignItems = 'center';
+    closeButton.style.justifyContent = 'center';
+    closeButton.onclick = togglePause;
+    
+    // Settings sections
+    const settingsList = document.createElement('div');
+    settingsList.style.marginTop = '30px';
+    
+    // Sound volume setting
+    const soundVolumeContainer = document.createElement('div');
+    soundVolumeContainer.className = 'settings-group';
+    soundVolumeContainer.style.marginBottom = '25px';
+    
+    const soundLabel = document.createElement('div');
+    soundLabel.textContent = 'Sound Volume';
+    soundLabel.style.marginBottom = '10px';
+    soundLabel.style.fontWeight = 'bold';
+    
+    const soundControlsWrapper = document.createElement('div');
+    soundControlsWrapper.style.display = 'flex';
+    soundControlsWrapper.style.alignItems = 'center';
+    
+    // Volume slider
+    const volumeSlider = document.createElement('input');
+    volumeSlider.type = 'range';
+    volumeSlider.min = '0';
+    volumeSlider.max = '100';
+    volumeSlider.value = gameSettings.soundVolume;
+    volumeSlider.disabled = gameSettings.isMuted;
+    volumeSlider.style.flex = '1';
+    volumeSlider.style.marginRight = '10px';
+    volumeSlider.style.accentColor = 'var(--primary-color)';
+    volumeSlider.oninput = function() {
+        gameSettings.soundVolume = this.value;
+        // TODO: Apply volume changes to game sounds
+    };
+    
+    // Mute toggle
+    const muteToggleWrapper = document.createElement('div');
+    muteToggleWrapper.style.display = 'flex';
+    muteToggleWrapper.style.alignItems = 'center';
+    
+    const muteLabel = document.createElement('label');
+    muteLabel.textContent = 'Mute';
+    muteLabel.style.marginRight = '5px';
+    muteLabel.style.cursor = 'pointer';
+    
+    const muteToggle = document.createElement('input');
+    muteToggle.type = 'checkbox';
+    muteToggle.checked = gameSettings.isMuted;
+    muteToggle.style.cursor = 'pointer';
+    muteToggle.style.width = '16px';
+    muteToggle.style.height = '16px';
+    muteToggle.onchange = function() {
+        gameSettings.isMuted = this.checked;
+        volumeSlider.disabled = this.checked;
+        // TODO: Apply mute settings to game sounds
+    };
+    
+    muteToggleWrapper.appendChild(muteLabel);
+    muteToggleWrapper.appendChild(muteToggle);
+    
+    soundControlsWrapper.appendChild(volumeSlider);
+    soundControlsWrapper.appendChild(muteToggleWrapper);
+    
+    soundVolumeContainer.appendChild(soundLabel);
+    soundVolumeContainer.appendChild(soundControlsWrapper);
+    
+    // Emoji size setting
+    const emojiSizeContainer = document.createElement('div');
+    emojiSizeContainer.className = 'settings-group';
+    emojiSizeContainer.style.marginBottom = '25px';
+    
+    const emojiSizeLabel = document.createElement('div');
+    emojiSizeLabel.textContent = 'Emoji Size';
+    emojiSizeLabel.style.marginBottom = '10px';
+    emojiSizeLabel.style.fontWeight = 'bold';
+    
+    const sizeButtonsContainer = document.createElement('div');
+    sizeButtonsContainer.style.display = 'flex';
+    sizeButtonsContainer.style.justifyContent = 'space-between';
+    sizeButtonsContainer.style.gap = '10px';
+    
+    // Size options
+    const sizes = [
+        { value: 'small', label: 'Small' },
+        { value: 'medium', label: 'Medium' },
+        { value: 'large', label: 'Large' }
+    ];
+    
+    sizes.forEach(size => {
+        const sizeButton = document.createElement('button');
+        sizeButton.textContent = size.label;
+        sizeButton.style.flex = '1';
+        sizeButton.style.padding = '10px';
+        sizeButton.style.border = '2px solid #ddd';
+        sizeButton.style.borderRadius = '10px';
+        sizeButton.style.background = gameSettings.emojiSize === size.value ? 'var(--primary-color)' : 'white';
+        sizeButton.style.color = gameSettings.emojiSize === size.value ? 'white' : '#333';
+        sizeButton.style.fontWeight = 'bold';
+        sizeButton.style.cursor = 'pointer';
+        sizeButton.style.transition = 'all 0.2s';
+        
+        sizeButton.onclick = function() {
+            gameSettings.emojiSize = size.value;
+            updateEmojiSize(size.value);
+            
+            // Update all size buttons
+            const allSizeButtons = sizeButtonsContainer.querySelectorAll('button');
+            allSizeButtons.forEach(btn => {
+                btn.style.background = 'white';
+                btn.style.color = '#333';
+            });
+            
+            // Highlight selected button
+            this.style.background = 'var(--primary-color)';
+            this.style.color = 'white';
+        };
+        
+        sizeButtonsContainer.appendChild(sizeButton);
+    });
+    
+    emojiSizeContainer.appendChild(emojiSizeLabel);
+    emojiSizeContainer.appendChild(sizeButtonsContainer);
+    
+    // Credits section
+    const creditsContainer = document.createElement('div');
+    creditsContainer.style.marginTop = '40px';
+    creditsContainer.style.textAlign = 'center';
+    creditsContainer.style.fontSize = '12px';
+    creditsContainer.style.color = '#999';
+    creditsContainer.textContent = 'Emoji Spotter v1.0 • Created with ❤️ • 2025';
+    
+    // Resume button
+    const resumeButton = document.createElement('button');
+    resumeButton.textContent = 'Resume Game';
+    resumeButton.style.width = '100%';
+    resumeButton.style.padding = '12px';
+    resumeButton.style.marginTop = '30px';
+    resumeButton.style.background = 'linear-gradient(90deg, var(--primary-color), #7691ff)';
+    resumeButton.style.color = 'white';
+    resumeButton.style.border = 'none';
+    resumeButton.style.borderRadius = '30px';
+    resumeButton.style.fontSize = '16px';
+    resumeButton.style.fontWeight = '600';
+    resumeButton.style.cursor = 'pointer';
+    resumeButton.style.transition = 'all 0.3s';
+    resumeButton.style.boxShadow = '0 4px 15px rgba(82, 113, 255, 0.3)';
+    resumeButton.onclick = togglePause;
+    
+    // Assemble settings modal
+    settingsList.appendChild(soundVolumeContainer);
+    settingsList.appendChild(emojiSizeContainer);
+    
+    settingsContent.appendChild(title);
+    settingsContent.appendChild(closeButton);
+    settingsContent.appendChild(settingsList);
+    settingsContent.appendChild(resumeButton);
+    settingsContent.appendChild(creditsContainer);
+    
+    settingsModal.appendChild(settingsContent);
+    document.body.appendChild(settingsModal);
+    
+    // Add animation
+    settingsContent.style.transform = 'scale(0.9)';
+    settingsContent.style.opacity = '0';
+    settingsContent.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    
+    setTimeout(() => {
+        settingsContent.style.transform = 'scale(1)';
+        settingsContent.style.opacity = '1';
+    }, 10);
 }
 
-// Hide pause overlay
-function hidePauseOverlay() {
-    const pauseOverlay = document.getElementById('pause-overlay');
-    if (pauseOverlay) {
-        document.body.removeChild(pauseOverlay);
+// Hide settings modal
+function hideSettingsModal() {
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) {
+        const settingsContent = settingsModal.querySelector('.settings-content');
+        
+        // Fade out animation
+        if (settingsContent) {
+            settingsContent.style.transform = 'scale(0.9)';
+            settingsContent.style.opacity = '0';
+            
+            setTimeout(() => {
+                document.body.removeChild(settingsModal);
+            }, 300);
+        } else {
+            document.body.removeChild(settingsModal);
+        }
     }
 }
+
+// Update emoji size based on settings
+function updateEmojiSize(size) {
+    // Scale factor for emoji sizes
+    let scaleFactor = 1;
+    
+    switch (size) {
+        case 'small':
+            scaleFactor = 0.8;
+            break;
+        case 'medium':
+            scaleFactor = 1;
+            break;
+        case 'large':
+            scaleFactor = 1.2;
+            break;
+    }
+    
+    // Apply to target emoji
+    if (targetEmojiElement) {
+        targetEmojiElement.style.fontSize = `${164 * scaleFactor}px`;
+    }
+    
+    // Apply to grid emojis
+    const gridEmojis = document.querySelectorAll('.emoji');
+    gridEmojis.forEach(emoji => {
+        emoji.style.fontSize = `${24 * scaleFactor}px`;
+    });
+    
+    // Save setting to storage for persistence
+    try {
+        localStorage.setItem('emojiSpotterSettings', JSON.stringify(gameSettings));
+    } catch (e) {
+        console.error('Failed to save settings to localStorage', e);
+    }
+}
+
+// Load settings from localStorage
+loadGameSettings();

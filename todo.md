@@ -94,7 +94,14 @@
 - [ ] Make it so they stack, and the new message "bumps" the previous ones up (so the origin point is always the same)
 
 ### Settings
-- [ ] Accessibility: emoji size (small/medium/large)
+- [ ] Replaces the "pause" screen and shortcut
+- [ ] Create simple popup window, same style as the initial instructions
+  - Title: Settings
+  - Close button: Top right
+- [ ] Add the settings, one at a time:
+  - [ ] Sound volume: *slider* / mute on/off *toggle*
+  - [ ] Accessibility: emoji size (small/medium/large) *choice chip*
+  - [ ] Very small credits at the bottom of window
 
 ---
 
