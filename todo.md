@@ -101,6 +101,10 @@
 - [ ] Add the settings, one at a time:
   - [x] Sound volume: *slider* / mute on/off *toggle*
   - [ ] Accessibility: emoji size (small/medium/large) *choice chip*
+    - Small: 6 columns
+    - Medium: 5 columns
+    - Large: 4 columns
+    - Tiles always should be sized so they fill the horizontal space available (with proper margins); vertical size must keep the same (or proportional) padding on all sizes
   - [x] Very small credits at the bottom of window
 
 ---

@@ -382,17 +382,17 @@ function generateEmojiGrid(activeCategory = null) {
         case 'small':
             fontSizeFactor = 1; // This is now our baseline size
             itemSizeFactor = 1;
-            gridColumns = 7; // More columns for small size
+            gridColumns = 6; // Small size: 6 columns
             break;
         case 'medium':
             fontSizeFactor = 1.5;
             itemSizeFactor = 1.3;
-            gridColumns = 5; // Medium columns
+            gridColumns = 5; // Medium size: 5 columns
             break;
         case 'large':
             fontSizeFactor = 2;
             itemSizeFactor = 1.8;
-            gridColumns = 3; // Fewer columns for large size
+            gridColumns = 4; // Large size: 4 columns
             break;
     }
     
@@ -427,9 +427,8 @@ function generateEmojiGrid(activeCategory = null) {
             const baseFontSize = 24; // Base font size in pixels
             emojiElement.style.fontSize = `${baseFontSize * fontSizeFactor}px`;
             
-            // Scale the entire element
-            emojiElement.style.width = `${40 * itemSizeFactor}px`;
-            emojiElement.style.height = `${40 * itemSizeFactor}px`;
+            // Remove explicit width/height to let CSS handle the full width
+            // and maintain aspect ratio for proper spacing
             emojiElement.style.padding = `${5 * itemSizeFactor}px`;
             emojiElement.style.borderRadius = `${8 * itemSizeFactor}px`;
             
@@ -1890,7 +1889,7 @@ function hideSettingsModal() {
 
 // Update emoji size based on settings
 function updateEmojiSize(size) {
-    // Get emoji size scale factors (more dramatic differences)
+    // Get emoji size scale factors
     let fontSizeFactor = 1;
     let itemSizeFactor = 1;
     let gridColumns = 6; // Default columns
@@ -1899,17 +1898,17 @@ function updateEmojiSize(size) {
         case 'small':
             fontSizeFactor = 1; // This is now our baseline size
             itemSizeFactor = 1;
-            gridColumns = 7; // More columns for small size
+            gridColumns = 6; // Small size: 6 columns
             break;
         case 'medium':
             fontSizeFactor = 1.5;
             itemSizeFactor = 1.3;
-            gridColumns = 5; // Medium columns
+            gridColumns = 5; // Medium size: 5 columns
             break;
         case 'large':
             fontSizeFactor = 2;
             itemSizeFactor = 1.8;
-            gridColumns = 3; // Fewer columns for large size
+            gridColumns = 4; // Large size: 4 columns
             break;
     }
     
@@ -1920,11 +1919,14 @@ function updateEmojiSize(size) {
         const baseFontSize = 24; // Base font size in pixels
         emoji.style.fontSize = `${baseFontSize * fontSizeFactor}px`;
         
-        // Scale the entire element
-        emoji.style.width = `${40 * itemSizeFactor}px`;
-        emoji.style.height = `${40 * itemSizeFactor}px`;
+        // Remove explicit width/height to let CSS handle the full width
+        // and maintain aspect ratio for proper spacing
         emoji.style.padding = `${5 * itemSizeFactor}px`;
         emoji.style.borderRadius = `${8 * itemSizeFactor}px`;
+        
+        // Remove width/height inline styles that might be present
+        emoji.style.removeProperty('width');
+        emoji.style.removeProperty('height');
     });
     
     // Update container grid layout

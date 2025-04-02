@@ -487,12 +487,14 @@ body {
     justify-content: center;
     cursor: pointer;
     height: 40px;
+    width: 100%; /* Make tiles fill the full width of their grid cell */
     background-color: white;
     border-radius: 12px;
     transition: all 0.2s;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     position: relative;
     overflow: hidden;
+    aspect-ratio: 1/1; /* Keep tiles square */
 }
 
 .emoji::before {
