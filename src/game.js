@@ -24,7 +24,7 @@ let isPaused = false; // Track if game is paused
 
 // Game settings
 let gameSettings = {
-    soundVolume: 70, // Volume level 0-100
+    soundVolume: 50, // Volume level 0-100
     isMuted: false, // Mute toggle
     emojiSize: 'small', // small, medium, large - small is default now
 };
@@ -433,7 +433,7 @@ function generateEmojiGrid(activeCategory = null) {
             emojiElement.style.padding = `${5 * itemSizeFactor}px`;
             emojiElement.style.borderRadius = `${8 * itemSizeFactor}px`;
             
-            // Use mouseup instead of click to better control when emojis are selected
+            // Handle desktop mouse events
             emojiElement.addEventListener('mousedown', (e) => {
                 // Mark this element as potentially receiving a click
                 emojiElement.dataset.clickStart = 'true';
@@ -447,16 +447,24 @@ function generateEmojiGrid(activeCategory = null) {
                 delete emojiElement.dataset.clickStart;
             });
             
-            // For touch devices
+            // For touch devices - separate tracking variable to prevent conflicts
+            let touchStarted = false;
+            
             emojiElement.addEventListener('touchstart', (e) => {
-                emojiElement.dataset.clickStart = 'true';
+                touchStarted = true;
+                moveDetected = false; // Reset move detection for new touch
+            });
+            
+            emojiElement.addEventListener('touchmove', () => {
+                moveDetected = true; // Mark as moved if touchmove triggers
             });
             
             emojiElement.addEventListener('touchend', (e) => {
-                if (emojiElement.dataset.clickStart === 'true' && !moveDetected) {
+                if (touchStarted && !moveDetected) {
                     handleEmojiClick(emoji, emojiElement);
+                    e.preventDefault(); // Prevent additional mouseup/click events
                 }
-                delete emojiElement.dataset.clickStart;
+                touchStarted = false;
             });
             
             emojiContainer.appendChild(emojiElement);
@@ -509,12 +517,13 @@ function handleEmojiClick(emoji, emojiElement) {
             setTimeout(() => scoreElement.classList.remove('pulse'), 500);
         }
         
-        // Show message with score breakdown
+        // Show floating point indicator
+        createFloatingIndicator(emojiElement, `+${pointsEarned}`, true);
+        
+        // Only show debug message if in debug mode
         if (debugMode) {
             const timeTaken = ((now - targetRevealTime) / 1000).toFixed(1);
-            showMessage(`+${pointsEarned} pts! (${timeTaken}s, ${incorrectAttempts} errors)`, '#4CAF50');
-        } else {
-            showMessage(`+${pointsEarned} pts!`, '#4CAF50');
+            showMessage(`Debug: ${timeTaken}s, ${incorrectAttempts} errors`, '#4CAF50');
         }
         
         // Show the emoji with a "correct" animation
@@ -537,7 +546,8 @@ function handleEmojiClick(emoji, emojiElement) {
         timeLeft = Math.max(1, timeLeft - 2);
         updateTimer();
         
-        showMessage('Wrong emoji! -2 sec', '#ff3b30');
+        // Show floating error indicator
+        createFloatingIndicator(emojiElement, "-2s", false);
         
         // Shake animation - handle case where animate.css might not be loaded
         try {
@@ -636,6 +646,38 @@ function createEmojiParticles(element) {
         }
     } catch (error) {
         console.error("Error creating particles:", error);
+    }
+}
+
+// Create a floating score indicator at the emoji position
+function createFloatingIndicator(element, text, isSuccess = true) {
+    if (!element) return;
+    
+    try {
+        // Get position of the element
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top;
+        
+        // Create indicator
+        const indicator = document.createElement('div');
+        indicator.className = `floating-indicator ${isSuccess ? 'success' : 'error'}`;
+        indicator.textContent = text;
+        indicator.style.left = `${centerX}px`;
+        indicator.style.top = `${centerY}px`;
+        indicator.style.transform = 'translate(-50%, -50%)';
+        
+        // Add to DOM
+        document.body.appendChild(indicator);
+        
+        // Remove after animation completes
+        setTimeout(() => {
+            if (document.body.contains(indicator)) {
+                document.body.removeChild(indicator);
+            }
+        }, 1500);
+    } catch (error) {
+        console.error("Error creating floating indicator:", error);
     }
 }
 
@@ -757,6 +799,7 @@ function showLevelCompleteMessage() {
         text.style.fontWeight = 'bold';
         text.style.marginBottom = '20px';
         text.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
+        text.style.textAlign = 'center'; // Ensure text is center-aligned on all devices
         
         // Create stars animation
         const stars = document.createElement('div');
@@ -764,6 +807,8 @@ function showLevelCompleteMessage() {
         stars.style.fontSize = '64px';
         stars.style.letterSpacing = '20px';
         stars.style.animation = 'starPulse 1s infinite alternate';
+        stars.style.textAlign = 'center'; // Center the stars
+        stars.style.width = '100%'; // Give full width to ensure centering works
         
         // Add star pulse animation
         const styleSheet = document.createElement('style');
@@ -1038,44 +1083,75 @@ function updateTimer() {
 // Show a temporary message
 function showMessage(message, color) {
     try {
+        // Ensure toast container exists
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        
+        // Determine toast type based on color
+        let toastType = 'default';
+        let iconSymbol = '📝';
+        
+        if (color === '#4CAF50') {
+            toast.classList.add('success');
+            toastType = 'success';
+            iconSymbol = '✅';
+        } else if (color === '#ff3b30') {
+            toast.classList.add('error');
+            toastType = 'error';
+            iconSymbol = '❌';
+        } else if (color === '#ff9500') {
+            toast.classList.add('warning');
+            toastType = 'warning';
+            iconSymbol = '⚠️';
+        }
+        
+        // Create toast icon
+        const icon = document.createElement('div');
+        icon.className = 'toast-icon';
+        icon.textContent = iconSymbol;
+        
+        // Create toast message
         const messageElement = document.createElement('div');
-        messageElement.className = 'message';
+        messageElement.className = 'toast-message';
         messageElement.textContent = message;
-        messageElement.style.position = 'fixed';
-        messageElement.style.top = '50%';
-        messageElement.style.left = '50%';
-        messageElement.style.transform = 'translate(-50%, -50%)';
-        messageElement.style.color = color || '#ffffff';
-        messageElement.style.fontSize = '28px';
-        messageElement.style.fontWeight = 'bold';
-        messageElement.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
-        messageElement.style.zIndex = '50';
-        messageElement.style.pointerEvents = 'none';
-        messageElement.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-        messageElement.style.padding = '10px 20px';
-        messageElement.style.borderRadius = '20px';
         
-        document.body.appendChild(messageElement);
+        // Create progress bar
+        const progressBar = document.createElement('div');
+        progressBar.className = 'toast-progress';
         
-        // Animate
-        messageElement.style.opacity = '0';
-        messageElement.style.transition = 'opacity 0.3s, transform 0.5s';
+        // Assemble toast
+        toast.appendChild(icon);
+        toast.appendChild(messageElement);
+        toast.appendChild(progressBar);
         
+        // Add to container
+        toastContainer.appendChild(toast);
+        
+        // Play removal animation and remove after delay
         setTimeout(() => {
-            messageElement.style.opacity = '1';
-        }, 10);
-        
-        setTimeout(() => {
-            messageElement.style.opacity = '0';
-            messageElement.style.transform = 'translate(-50%, -100%)';
+            toast.style.animation = 'toast-slide-out 0.3s forwards';
             setTimeout(() => {
-                if (document.body.contains(messageElement)) {
-                    document.body.removeChild(messageElement);
+                if (toastContainer.contains(toast)) {
+                    toastContainer.removeChild(toast);
                 }
-            }, 500);
-        }, 1200);
+                
+                // Remove container if empty
+                if (toastContainer.children.length === 0) {
+                    document.body.removeChild(toastContainer);
+                }
+            }, 300);
+        }, 2500); // Show for 2.5 seconds
+        
     } catch (error) {
-        console.error("Error showing message:", error);
+        console.error("Error showing toast message:", error);
     }
 }
 
@@ -1569,13 +1645,17 @@ function stopDrag(e) {
         momentum();
     }
     
-    // Only prevent default emoji click if we actually moved
-    if (moveDetected && e && e.type !== 'touchend') {
-        e.preventDefault();
+    // If we've detected movement, cancel click events
+    if (moveDetected) {
+        if (e && e.type !== 'touchend') {
+            e.preventDefault();
+        }
         
-        // Temporary disable emoji clicks to avoid accidental selections
+        // Disable all emoji click events temporarily to prevent accidental selection after drag
         const emojis = emojiGridElement.querySelectorAll('.emoji');
         emojis.forEach(emoji => {
+            // Remove click start data and temporarily disable pointer events
+            delete emoji.dataset.clickStart;
             emoji.style.pointerEvents = 'none';
         });
         
@@ -1584,7 +1664,7 @@ function stopDrag(e) {
             emojis.forEach(emoji => {
                 emoji.style.pointerEvents = 'auto';
             });
-        }, 100);
+        }, 300); // Longer delay to ensure no accidental taps
     }
     
     isDragging = false;
