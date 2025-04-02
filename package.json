@@ -4,7 +4,11 @@
   "description": "Find the target emoji game",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "dev": "vite",
+    "build": "vite build",
+    "vercel-build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
