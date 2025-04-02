@@ -168,7 +168,7 @@ body {
 
 /* Game container needs to adapt to vertical space */
 .game-container {
-    margin-top: 80px;
+    margin: 40px 0 0 0; /* Remove left/right/bottom margins, keep top for header */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -176,7 +176,7 @@ body {
     max-width: 625px;
     position: relative;
     z-index: 10;
-    height: calc(100vh - 100px); /* Adjust for header and margin */
+    height: calc(min(100vh - 100px, 924px)); /* Limit max height to 924px (1024px - 100px for header) */
     min-height: 600px; /* Minimum height for very small screens */
 }
 
@@ -753,23 +753,6 @@ body {
     width: 100%;
 }
 
-.emoji-box {
-    width: 180px;
-    height: 180px;
-    aspect-ratio: 1/1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease;
-}
-
-.emoji-box:hover {
-    transform: translateY(-2px) scale(1.10);
-    /* box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); */
-}
-
-/* Find this emoji text - simplified but still visually interesting */
 .find-emoji-title-inside {
     text-align: center;
     font-size: 16px;
@@ -835,7 +818,6 @@ body {
     }
 
     .game-container {
-        margin: 60px 0 0 0; /* Remove left/right/bottom margins, keep top for header */
         width: 100%;
         max-width: 100%;
         height: calc(100vh - 60px); /* Adjust for header */
@@ -855,10 +837,6 @@ body {
     .emoji-box {
         width: 120px;
         height: 120px;
-    }
-
-    #target-emoji {
-        font-size: 80px;
     }
 
     .find-emoji-title-inside {
@@ -968,21 +946,13 @@ body {
 
 /* Media queries for different height screens */
 @media (max-height: 800px) {
-    .emoji-box {
-        width: 140px;
-        height: 140px;
-    }
-    
-    #target-emoji {
-        font-size: 140px;
-    }
-    
     .find-emoji-title-inside {
         margin: 0 0 10px 0;
     }
     
     .timer-container {
         margin-bottom: 10px;
+        margin-top: 40px;
     }
 }
 
@@ -991,15 +961,9 @@ body {
     .find-emoji-title-inside {
         display: none;
     }
-    
-    /* Make the emoji box more compact */
-    .emoji-box {
-        width: 130px;
-        height: 130px;
-    }
-    
-    #target-emoji {
-        font-size: 120px;
+
+    .emoji-box-container {
+        margin: 20px 0;
     }
     
     /* More compact spacing */
@@ -1019,45 +983,34 @@ body {
 }
 
 @media (max-height: 700px) {
-    .emoji-box {
-        width: 110px;
-        height: 110px;
-    }
-    
-    #target-emoji {
-        font-size: 90px;
-    }
-    
     .category-tab {
         padding: 8px 12px;
     }
     
     .game-container {
-        margin-top: 70px;
+        height: calc(100vh - 75px);
     }
     
     .game-card {
-        padding: 20px 28px;
         gap: 15px;
+    }
+
+    .emoji-grid {
+        min-height: 150px;
     }
 }
 
 @media (max-height: 650px) {
-    .emoji-box {
-        width: 90px;
-        height: 90px;
-    }
-    
-    #target-emoji {
-        font-size: 70px;
-    }
-    
     .timer-container {
         margin-bottom: 5px;
     }
+
+    .game-container {
+        height: calc(100vh - 70px);
+    }
     
-    #timer-bar {
-        height: 1.5rem;
+    .emoji-grid {
+        min-height: 120px;
     }
 }
 
@@ -1065,10 +1018,6 @@ body {
 @media (max-width: 380px) {
     .emoji-category-container {
         grid-template-columns: repeat(3, 1fr);
-    }
-    
-    #target-emoji {
-        font-size: 70px;
     }
     
     .emoji-box {
