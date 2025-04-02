@@ -19,10 +19,10 @@
 ## Gameplay
 ### UI Improvements
 
-#### Hints System
+#### Refine Hints System
 
 - [ ] Make the target emoji's tab appear only after a few seconds (2s)
-- [ ] After 5s, make the emoji background pulsate and glow a little and flash VERY mildly
+- [ ] After 5s, make the emoji background pulsate and glow (a little) so the player can see it
 
 #### Overlay system
 
@@ -35,8 +35,8 @@
 - [ ] Add credits
 - [x] Add missing SFX
   - [x] Countdown (mario kart inspired)
-- [ ] Add mute button directly on header
-- [ ] Lower default volume
+- [x] Add mute button directly on header
+- [x] Lower default volume
 
 ---
 
@@ -59,13 +59,12 @@
 ### Technical
 
 - [ ] Minify CSS and whatever else
-
+- [ ] Move dependencies to local storage (unpkg sucks)
 - [ ] When counting down, either have the tiles in already, or hide everything (including main window)
 
-  
+---  
 
 ---
-
 
 
 ## Done

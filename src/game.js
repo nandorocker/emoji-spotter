@@ -1360,6 +1360,18 @@ window.addEventListener('load', () => {
                 togglePause();
             });
         }
+        
+        // Add click handler to sound toggle icon
+        const soundIcon = document.getElementById('sound-icon');
+        const soundToggleContainer = document.querySelector('.sound-toggle-container');
+        if (soundToggleContainer) {
+            soundToggleContainer.addEventListener('click', () => {
+                toggleSound();
+            });
+            
+            // Set initial icon state based on game settings
+            updateSoundIcon();
+        }
 
         // Start resource loading and game initialization
         const resourcesLoadedPromise = Promise.all([
@@ -2051,3 +2063,43 @@ function updateEmojiSize(size) {
 
 // Load settings from localStorage
 loadGameSettings();
+
+// Toggle sound on/off
+function toggleSound() {
+    gameSettings.isMuted = !gameSettings.isMuted;
+    
+    // Apply audio settings
+    applyAudioSettings(gameSettings.soundVolume, gameSettings.isMuted);
+    
+    // Update icon
+    updateSoundIcon();
+    
+    // Save settings
+    saveGameSettings();
+    
+    // Show feedback message
+    showMessage(gameSettings.isMuted ? 'Sound muted' : 'Sound enabled', '#4CAF50');
+}
+
+// Update sound icon based on mute state
+function updateSoundIcon() {
+    const soundIcon = document.getElementById('sound-icon');
+    if (!soundIcon) return;
+    
+    // Remove current icon
+    soundIcon.removeAttribute('data-lucide');
+    
+    // Set new icon based on mute state
+    if (gameSettings.isMuted) {
+        soundIcon.setAttribute('data-lucide', 'volume-x');
+    } else {
+        soundIcon.setAttribute('data-lucide', 'volume-2');
+    }
+    
+    // Refresh Lucide icon
+    if (window.lucide) {
+        lucide.createIcons({
+            icons: [soundIcon]
+        });
+    }
+}

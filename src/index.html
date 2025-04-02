@@ -26,21 +26,27 @@
     <div class="particles-container" id="particles-js"></div>
     
     <header class="game-header">
-        <!-- Game logo in top left -->
+        <!-- Left: Logo -->
         <div class="game-logo">Emoji Spotter</div>
-        
-        <!-- Score and level in top center -->
-        <div class="score-level-display">
-            <span>Level: <span id="level">1</span></span>
-            <span class="level-divider">•</span>
-            <span>Score: <span id="score">0</span></span>
+      
+        <!-- Center: Score/Level -->
+        <div class="score-level-display" style="position: absolute; left: 50%; transform: translateX(-50%);">
+          <span>Level: <span id="level">1</span></span>
+          <span class="level-divider">•</span>
+          <span>Score: <span id="score">0</span></span>
         </div>
-        
-        <!-- Settings icon in top right -->
-        <div class="settings-container">
+      
+        <!-- Right: Mute + Settings -->
+        <div style="display: flex; gap: 10px;">
+          <div class="sound-toggle-container">
+            <i data-lucide="volume-2" id="sound-icon"></i>
+          </div>
+          <div class="settings-container">
             <i data-lucide="settings" id="settings-icon"></i>
+          </div>
         </div>
     </header>
+      
     
     <div class="game-container">
         <!-- Main game card that contains everything else -->
