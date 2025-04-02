@@ -1,12 +1,12 @@
 // Audio file imports
-import bonusSound from '/audio/bonus.mp3';
-import correctSound from '/audio/correct.mp3';
-import gameOverSound from '/audio/game_over.mp3';
-import incorrectSound from '/audio/incorrect.mp3';
-import levelCompleteSound from '/audio/level_complete.mp3';
-import pauseSound from '/audio/pause.mp3';
-import countdownStartSound from '/audio/countdown_start.mp3';
-import countdownLastSound from '/audio/countdown_last.mp3';
+import bonusSound from './assets/audio/bonus.mp3';
+import correctSound from './assets/audio/correct.mp3';
+import gameOverSound from './assets/audio/game_over.mp3';
+import incorrectSound from './assets/audio/incorrect.mp3';
+import levelCompleteSound from './assets/audio/level_complete.mp3';
+import pauseSound from './assets/audio/pause.mp3';
+import countdownStartSound from './assets/audio/countdown_start.mp3';
+import countdownLastSound from './assets/audio/countdown_last.mp3';
 
 // Create and export audio elements
 export const audioElements = {
