@@ -870,37 +870,16 @@ function showLevelTransition() {
     // Create level info for the countdown overlay
     const levelInfo = document.createElement('div');
     levelInfo.className = 'level-transition-info';
-    levelInfo.style.fontSize = '24px';
-    levelInfo.style.fontWeight = 'normal';
-    levelInfo.style.textAlign = 'center';
-    levelInfo.style.color = 'white';
-    levelInfo.style.maxWidth = '80%';
-    levelInfo.style.padding = '20px';
-    levelInfo.style.backgroundColor = 'rgba(82, 113, 255, 0.2)';
-    levelInfo.style.borderRadius = '16px';
-    levelInfo.style.backdropFilter = 'blur(5px)';
-    levelInfo.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-    levelInfo.style.transition = 'transform 0.5s ease';
-    levelInfo.style.userSelect = 'none';
-    levelInfo.style.webkitUserSelect = 'none';
-    levelInfo.style.MozUserSelect = 'none';
-    levelInfo.style.msUserSelect = 'none';
     
     // Create level heading
     const levelTitle = document.createElement('div');
     levelTitle.textContent = `LEVEL ${level}`;
-    levelTitle.style.fontSize = '36px';
-    levelTitle.style.fontWeight = 'bold';
-    levelTitle.style.marginBottom = '15px';
-    levelTitle.style.background = 'linear-gradient(90deg, var(--primary-color), var(--secondary-color))';
-    levelTitle.style.webkitBackgroundClip = 'text';
-    levelTitle.style.webkitTextFillColor = 'transparent';
-    levelTitle.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+    levelTitle.className = 'level-title';
     
     // Add required matches info
     const objectiveText = document.createElement('div');
     objectiveText.innerHTML = `Find <b>${matchesRequired}</b> emojis in <b>${timeLeft}</b> seconds`;
-    objectiveText.style.marginBottom = '15px';
+    objectiveText.className = 'level-objective';
     
     // Add level info elements
     levelInfo.appendChild(levelTitle);
@@ -911,18 +890,14 @@ function showLevelTransition() {
         const formattedCategory = formatCategoryName(currentLevelConfig.newCategory);
         const newCategoryText = document.createElement('div');
         newCategoryText.innerHTML = `<span style="color:#ffbd59">NEW CATEGORY:</span> <b>${formattedCategory}</b>`;
-        newCategoryText.style.marginTop = '15px';
-        newCategoryText.style.padding = '10px 15px';
-        newCategoryText.style.backgroundColor = 'rgba(255, 189, 89, 0.2)';
-        newCategoryText.style.borderRadius = '8px';
+        newCategoryText.className = 'new-category';
         levelInfo.appendChild(newCategoryText);
         
         // Add a simpler emoji preview from the new category
         const categoryEmojis = emojiList[currentLevelConfig.newCategory];
         if (categoryEmojis && categoryEmojis.length > 0) {
             const previewContainer = document.createElement('div');
-            previewContainer.style.marginTop = '10px';
-            previewContainer.style.fontSize = '32px';
+            previewContainer.className = 'category-emoji-preview';
             
             // Display only 3 random emojis from the category
             const sampleSize = 3;
@@ -937,29 +912,11 @@ function showLevelTransition() {
         }
     }
     
-    // Add info box to overlay first (centered)
-    levelInfo.style.position = 'absolute';
-    levelInfo.style.top = '50%';
-    levelInfo.style.left = '50%';
-    levelInfo.style.transform = 'translate(-50%, -50%)';
     countdownOverlay.appendChild(levelInfo);
     
     // Create countdown element - initially hidden
     const countdownWrapper = document.createElement('div');
-    countdownWrapper.style.fontSize = '120px';
-    countdownWrapper.style.fontWeight = 'bold';
-    countdownWrapper.style.color = 'white';
-    countdownWrapper.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.7)';
-    countdownWrapper.style.opacity = '0';
-    countdownWrapper.style.position = 'absolute';
-    countdownWrapper.style.top = '50%';
-    countdownWrapper.style.left = '50%';
-    countdownWrapper.style.transform = 'translate(-50%, -50%)';
-    countdownWrapper.style.transition = 'opacity 0.5s ease';
-    countdownWrapper.style.userSelect = 'none';
-    countdownWrapper.style.webkitUserSelect = 'none';
-    countdownWrapper.style.MozUserSelect = 'none';
-    countdownWrapper.style.msUserSelect = 'none';
+    countdownWrapper.className = 'level-countdown';
     countdownWrapper.textContent = '3';
     countdownOverlay.appendChild(countdownWrapper);
     
