@@ -1505,6 +1505,24 @@ function handleKeyPress(event) {
                 advanceToNextLevel();
             }
         }
+
+        // Add 1 second to timer with '+' key
+        if (event.key === '+' || event.key === '=') {
+            if (!isGameOver) {
+                timeLeft++;
+                updateTimer();
+                showMessage('+1 second', '#4CAF50');
+            }
+        }
+
+        // Subtract 1 second from timer with '-' key
+        if (event.key === '-' || event.key === '_') {
+            if (!isGameOver) {
+                timeLeft = Math.max(1, timeLeft - 1);
+                updateTimer();
+                showMessage('-1 second', '#ff9500');
+            }
+        }
     }
 } 
 
