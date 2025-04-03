@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Timer UI</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      color: white;
+    }
+
+    .timer-wrapper {
+      position: relative;
+      width: 600px;
+      margin-bottom: 40px;
+    }
+
+    .timer-container {
+      position: relative;
+      width: 100%;
+      height: 30px;
+      background: #222;
+      overflow: hidden;
+    }
+
+    .timer-fill {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      left: 0;
+      top: 0;
+      background: linear-gradient(to right, #00f0ff, #00aaff);
+      transition: width 1s linear, background 0.3s ease;
+    }
+
+    .shimmer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes shimmer {
+      from {
+        background-position: -200% 0;
+      }
+      to {
+        background-position: 200% 0;
+      }
+    }
+
+    .timer-circle {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: white;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #444;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-wrapper">
+    <div class="timer-container">
+      <div class="timer-fill" id="timer-fill">
+        <div class="shimmer"></div>
+      </div>
+    </div>
+    <div class="timer-circle" id="timer-circle">20</div>
+  </div>
+
+  <button onclick="resetTimer()">Reset Timer</button>
+
+  <script>
+    const duration = 20;
+    let timeLeft = duration;
+    let intervalId;
+
+    const fill = document.getElementById('timer-fill');
+    const circle = document.getElementById('timer-circle');
+    const container = document.querySelector('.timer-container');
+
+    function getColorState(t) {
+      if (t <= 5) return 'red';
+      if (t <= 10) return 'yellow';
+      return 'blue';
+    }
+
+    function updateColor(state) {
+      switch(state) {
+        case 'red':
+          fill.style.background = 'linear-gradient(to right, #ff0000, #aa0000)';
+          break;
+        case 'yellow':
+          fill.style.background = 'linear-gradient(to right, #ffe000, #ffaa00)';
+          break;
+        default:
+          fill.style.background = 'linear-gradient(to right, #00f0ff, #00aaff)';
+          break;
+      }
+    }
+
+    function updateUI() {
+      const percent = Math.max(timeLeft / duration, 0);
+      const containerWidth = container.offsetWidth;
+
+      fill.style.width = `${percent * 100}%`;
+      circle.style.left = `${percent * containerWidth}px`;
+      circle.textContent = timeLeft;
+
+      updateColor(getColorState(timeLeft));
+    }
+
+    function startTimer() {
+      clearInterval(intervalId);
+      updateUI();
+
+      intervalId = setInterval(() => {
+        timeLeft--;
+        updateUI();
+
+        if (timeLeft <= 0) {
+          clearInterval(intervalId);
+          circle.textContent = '0';
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(intervalId);
+      timeLeft = duration;
+      updateUI();
+      startTimer();
+    }
+
+    startTimer();
+  </script>
+</body>
+</html>

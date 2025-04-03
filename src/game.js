@@ -60,6 +60,7 @@ const scoreElement = document.getElementById('score');
 const levelElement = document.getElementById('level');
 const timerFillElement = document.getElementById('timer-fill');
 const timerTextElement = document.getElementById('timer-text');
+const timerCircleElement = document.getElementById('timer-circle');
 const targetEmojiElement = document.getElementById('target-emoji');
 const targetPulseElement = document.getElementById('target-pulse');
 const emojiGridElement = document.getElementById('emoji-grid');
@@ -253,6 +254,7 @@ function initGame() {
         timerFillElement.style.width = '100%';
         timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
         timerFillElement.style.animation = 'none';
+        timerCircleElement.style.left = '0'; // Reset circle to the start
     }
     if (timerTextElement) timerTextElement.textContent = timeLeft;
     
@@ -1051,28 +1053,47 @@ function startTimer() {
 
 // Update timer display
 function updateTimer() {
-    if (!timerFillElement || !timerTextElement) return;
+    if (!timerFillElement || !timerTextElement || !timerCircleElement) return;
     
     // Get max time from current level config
     const maxTime = currentLevelConfig ? currentLevelConfig.time : 30;
     const percentage = (timeLeft / maxTime) * 100;
     
-    timerFillElement.style.width = `${percentage}%`;
+    // Update the timer text
     timerTextElement.textContent = timeLeft;
     
-    // Change color based on time remaining
-    if (timeLeft <= 5) {
-        timerFillElement.style.background = 'linear-gradient(90deg, #ff3b30, #ff634d)';
-        // Add pulse animation when time is running out
-        timerFillElement.style.animation = 'pulse 0.5s infinite';
-    } else if (timeLeft <= 10) {
-        timerFillElement.style.background = 'linear-gradient(90deg, #ff9500, #ffbd59)';
-        timerFillElement.style.animation = 'none';
-    } else {
-        // Green color for good time remaining (more than 10 seconds)
-        timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
-        timerFillElement.style.animation = 'none';
-    }
+    // Calculate bar dimensions
+    const timerBarWidth = timerFillElement.parentElement.offsetWidth;
+    const circleWidth = timerCircleElement.offsetWidth;
+    
+    // Calculate the effective travel area 
+    const effectiveBarWidth = timerBarWidth - circleWidth;
+    
+    // Update both timer fill and circle in the same animation frame
+    // Use the same percentage math for both to ensure sync
+    requestAnimationFrame(() => {
+        // Set the bar width
+        timerFillElement.style.width = `${percentage}%`;
+        
+        // Calculate circle left position - use the same percentage logic
+        const circlePosition = (percentage / 100) * effectiveBarWidth;
+        timerCircleElement.style.left = `${circlePosition}px`;
+        
+        // Update timer text color based on time remaining
+        if (timeLeft <= 5) {
+            timerTextElement.style.color = '#ff3b30'; // Red for critical time
+            timerFillElement.style.background = 'linear-gradient(90deg, #ff3b30, #ff634d)';
+            timerFillElement.style.animation = 'pulse 0.5s infinite';
+        } else if (timeLeft <= 10) {
+            timerTextElement.style.color = '#ff9500'; // Orange for warning time
+            timerFillElement.style.background = 'linear-gradient(90deg, #ff9500, #ffbd59)';
+            timerFillElement.style.animation = 'none';
+        } else {
+            timerTextElement.style.color = 'black'; // Default black for normal time
+            timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+            timerFillElement.style.animation = 'none';
+        }
+    });
 }
 
 // Show a temporary message
