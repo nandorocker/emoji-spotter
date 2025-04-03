@@ -2080,8 +2080,10 @@ function toggleSound() {
     // Save settings
     saveGameSettings();
     
-    // Show feedback message
-    showMessage(gameSettings.isMuted ? 'Sound muted' : 'Sound enabled', '#4CAF50');
+    // Only show message in debug mode
+    if (debugMode) {
+        showMessage(gameSettings.isMuted ? 'Sound muted' : 'Sound enabled', '#4CAF50');
+    }
 }
 
 // Update sound icon based on mute state
@@ -2089,20 +2091,24 @@ function updateSoundIcon() {
     const soundIcon = document.getElementById('sound-icon');
     if (!soundIcon) return;
     
-    // Remove current icon
-    soundIcon.removeAttribute('data-lucide');
+    // First clear any existing content
+    soundIcon.innerHTML = '';
     
-    // Set new icon based on mute state
+    // Set the correct icon type based on mute state
+    const iconName = gameSettings.isMuted ? 'volume-x' : 'volume-2';
+    soundIcon.setAttribute('data-lucide', iconName);
+    
+    // Set color (red for muted)
     if (gameSettings.isMuted) {
-        soundIcon.setAttribute('data-lucide', 'volume-x');
+        soundIcon.style.color = '#ff3b30'; // Red for muted
     } else {
-        soundIcon.setAttribute('data-lucide', 'volume-2');
+        soundIcon.style.color = ''; // Default color when not muted
     }
     
-    // Refresh Lucide icon
+    // Force lucide to create a new icon
     if (window.lucide) {
         lucide.createIcons({
-            icons: [soundIcon]
+            elements: [soundIcon]
         });
     }
 }
