@@ -77,9 +77,13 @@ A fun web game that tests your ability to quickly find specific emojis. Challeng
 
 ## 🐞 Debug Mode
 
-- Press `d` to toggle debug on/off
-- Press `t` to toggle stop timer
-- Press `r` to reset the game
+- Press `d` to toggle debug mode on/off
+- Press `t` to pause/resume the timer (debug mode only)
+- Press `r` to reset the game (debug mode only)
+- Press `l` to restart the current level (debug mode only)
+- Press `n` to skip to the next level (debug mode only)
+- Press `+` to add 1 second to the timer (debug mode only)
+- Press `-` to subtract 1 second from the timer (debug mode only)
 
 ## 🤝 Contributing
 
