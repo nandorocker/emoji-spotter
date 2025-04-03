@@ -200,6 +200,14 @@ function startCountdown() {
         return;
     }
     
+    // Reset the timer circle position to start on the right side
+    if (timerCircleElement) {
+        timerCircleElement.style.left = 'calc(100% - 45px)';
+    }
+    if (timerFillElement) {
+        timerFillElement.style.width = '100%';
+    }
+    
     countdownOverlay.style.display = 'flex';
     let count = 3;
     countdownElement.textContent = count;
@@ -254,7 +262,7 @@ function initGame() {
         timerFillElement.style.width = '100%';
         timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
         timerFillElement.style.animation = 'none';
-        timerCircleElement.style.left = '0'; // Reset circle to the start
+        timerCircleElement.style.left = 'calc(100% - 45px)'; // Position circle slightly more to the left
     }
     if (timerTextElement) timerTextElement.textContent = timeLeft;
     

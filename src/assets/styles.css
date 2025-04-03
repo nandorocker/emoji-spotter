@@ -311,6 +311,19 @@ body {
     display: none;
 }
 
+.level-target-score-row {
+    display: flex;
+    justify-content: space-between; /* or space-evenly if you like */
+    align-items: center;
+    margin: 0 1rem;
+  }
+  
+  .level-display,
+  .score-display {
+    font-weight: bold;
+    color: #333; /* adjust as you like */
+  }
+
 #target-emoji {
     font-size: 120px; /* Smaller for mobile */
     line-height: 1;
