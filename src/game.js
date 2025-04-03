@@ -200,12 +200,13 @@ function startCountdown() {
         return;
     }
     
-    // Reset the timer circle position to start on the right side
-    if (timerCircleElement) {
-        timerCircleElement.style.left = 'calc(100% - 20px)';
-    }
-    if (timerFillElement) {
+    // Reset the timer circle position to rightmost position
+    if (timerCircleElement && timerFillElement) {
         timerFillElement.style.width = '100%';
+        const timerBarWidth = timerFillElement.parentElement.offsetWidth;
+        const circleWidth = timerCircleElement.offsetWidth;
+        const effectiveBarWidth = timerBarWidth - circleWidth;
+        timerCircleElement.style.left = `${effectiveBarWidth}px`;
     }
     
     countdownOverlay.style.display = 'flex';
@@ -262,7 +263,7 @@ function initGame() {
         timerFillElement.style.width = '100%';
         timerFillElement.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
         timerFillElement.style.animation = 'none';
-        timerCircleElement.style.left = 'calc(100% - 20px)';
+        timerCircleElement.style.left = 'calc(100% - 45px)'; // Position circle slightly more to the left
     }
     if (timerTextElement) timerTextElement.textContent = timeLeft;
     
@@ -870,15 +871,6 @@ function showLevelTransition() {
     if (!countdownOverlay || !countdownElement) {
         startNextLevel();
         return;
-    }
-    
-    // Reset the timer circle position to rightmost position
-    if (timerCircleElement && timerFillElement) {
-        timerFillElement.style.width = '100%';
-        const timerBarWidth = timerFillElement.parentElement.offsetWidth;
-        const circleWidth = timerCircleElement.offsetWidth;
-        const effectiveBarWidth = timerBarWidth - circleWidth;
-        timerCircleElement.style.left = `${effectiveBarWidth}px`;
     }
     
     // Show overlay with countdown
