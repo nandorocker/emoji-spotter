@@ -1770,6 +1770,8 @@ function calculateScore(category) {
 
     if (speedMultiplier >= 1.5) {
         playSound('bonus');
+        // Create bonus particles animation
+        createBonusParticles();
     }
     
     // For debugging
@@ -1778,6 +1780,78 @@ function calculateScore(category) {
     }
     
     return totalPoints;
+}
+
+// Create special bonus particles when player gets a speed bonus
+function createBonusParticles() {
+    try {
+        // Get the target emoji element position to center particles
+        if (!targetEmojiElement) return;
+        
+        const rect = targetEmojiElement.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Fun emojis to use for bonus particles
+        const bonusEmojis = ['🎉', '⭐', '💫', '✨', '🌟', '💯', '🔥', '🚀'];
+        
+        // Show toast for speed bonus instead of floating text
+        showMessage('SPEED BONUS!', '#ffbd59');
+        
+        // Create more impressive particle effect with emojis
+        for (let i = 0; i < 15; i++) {
+            // Randomly select one of the bonus emojis
+            const emoji = bonusEmojis[Math.floor(Math.random() * bonusEmojis.length)];
+            
+            // Create particle
+            const particle = document.createElement('div');
+            particle.textContent = emoji;
+            particle.style.position = 'fixed';
+            particle.style.left = `${centerX}px`;
+            particle.style.top = `${centerY}px`;
+            particle.style.fontSize = `${16 + Math.random() * 20}px`; // Random size
+            particle.style.transform = 'translate(-50%, -50%)';
+            particle.style.zIndex = '100';
+            particle.style.pointerEvents = 'none';
+            
+            // Add subtle rotation
+            const rotation = Math.random() * 360;
+            particle.style.rotate = `${rotation}deg`;
+            
+            document.body.appendChild(particle);
+            
+            // Random trajectory with more dynamic movement
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 150; // Longer distances
+            const duration = 0.8 + Math.random() * 1.2; // Varied durations
+            
+            const destX = centerX + Math.cos(angle) * distance;
+            const destY = centerY + Math.sin(angle) * distance;
+            
+            // Apply transitions with randomized timing
+            particle.style.transition = `all ${duration}s cubic-bezier(0.165, 0.84, 0.44, 1)`;
+            
+            setTimeout(() => {
+                particle.style.left = `${destX}px`;
+                particle.style.top = `${destY}px`;
+                particle.style.opacity = '0';
+                particle.style.scale = '0.5';
+                
+                // Add additional rotation during flight
+                const additionalRotation = Math.random() * 720 - 360; // -360 to +360 deg
+                particle.style.rotate = `${rotation + additionalRotation}deg`;
+            }, 10);
+            
+            // Clean up particles after animation
+            setTimeout(() => {
+                if (document.body.contains(particle)) {
+                    document.body.removeChild(particle);
+                }
+            }, duration * 1000 + 100);
+        }
+    } catch (error) {
+        console.error("Error creating bonus particles:", error);
+    }
 }
 
 // Toggle game pause
