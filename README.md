@@ -87,7 +87,7 @@ A fun web game that tests your ability to quickly find specific emojis. Challeng
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/emoji-spotter/issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/nandorocker/emoji-spotter/issues).
 
 ## 📝 License
 
@@ -101,4 +101,4 @@ This project is [MIT](LICENSE) licensed.
 
 ---
 
-Made with ❤️ by nandorocker
+Made with ❤️ by [nandorocker](https://nan.do)
